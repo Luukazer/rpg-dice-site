@@ -3,43 +3,138 @@
 <head>
 <meta charset="UTF-8">
 <title>Admin RPG</title>
+
 <style>
-body{background:#0f1115;color:#e0e0e0;font-family:Arial;padding:20px}
-input,button{background:#1a1d24;color:#e0e0e0;border:1px solid #333;padding:8px}
-.perfil{border:1px solid #333;margin:10px 0;padding:10px}
+body{
+  background:#0f1115;
+  color:#e5e7eb;
+  font-family:Arial, Helvetica, sans-serif;
+  padding:30px;
+}
+
+h2{
+  margin-bottom:20px;
+}
+
+input, button{
+  background:#1a1d24;
+  color:#e5e7eb;
+  border:1px solid #2c2f36;
+  padding:10px 14px;
+  border-radius:6px;
+  font-size:15px;
+}
+
+button{
+  cursor:pointer;
+}
+button:hover{
+  background:#222633;
+}
+
+.admin-box{
+  max-width:600px;
+}
+
+.perfil{
+  background:#141720;
+  border:1px solid #2c2f36;
+  border-radius:8px;
+  padding:12px;
+  margin-top:15px;
+}
+
+.perfil b{
+  font-size:16px;
+  color:#dbe7ff;
+}
+
+.links{
+  margin:6px 0;
+  font-size:14px;
+}
+
+.links a{
+  color:#8fa2ff;
+  text-decoration:none;
+}
+.links a:hover{
+  text-decoration:underline;
+}
+
+.excluir{
+  margin-top:8px;
+  background:#2a1d1d;
+  border-color:#4a2a2a;
+}
+.excluir:hover{
+  background:#3a2222;
+}
 </style>
 </head>
+
 <body>
 
-<h2>Admin – Perfis</h2>
-<input id="nome" placeholder="Nome do perfil">
-<button onclick="criar()">Criar</button>
-<div id="lista"></div>
+<div class="admin-box">
+  <h2>🎲 Painel do Mestre</h2>
+
+  <input id="nome" placeholder="Nome do perfil">
+  <button onclick="criar()">Criar perfil</button>
+
+  <div id="lista"></div>
+</div>
 
 <script>
-const perfis=JSON.parse(localStorage.getItem('perfis')||'{}');
-function salvar(){localStorage.setItem('perfis',JSON.stringify(perfis));listar();}
+const perfis = JSON.parse(localStorage.getItem('perfis') || '{}');
+
+function salvar(){
+  localStorage.setItem('perfis', JSON.stringify(perfis));
+  listar();
+}
+
 function criar(){
- const nome=document.getElementById('nome').value;
- if(!nome)return;
- const id=Math.random().toString(36).substr(2);
- perfis[id]={nome};
- salvar();
+  const nome = document.getElementById('nome').value.trim();
+  if(!nome) return;
+
+  const id = Math.random().toString(36).substr(2);
+  perfis[id] = { nome };
+  document.getElementById('nome').value = '';
+  salvar();
 }
-function excluir(id){delete perfis[id];salvar();}
+
+function excluir(id){
+  if(!confirm('Excluir este perfil?')) return;
+  delete perfis[id];
+  salvar();
+}
+
 function listar(){
- lista.innerHTML='';
- for(const id in perfis){
-  lista.innerHTML+=`
-  <div class="perfil">
-   <b>${perfis[id].nome}</b><br>
-   Jogador: <a href="player.html#${id}" target="_blank">abrir</a><br>
-   OBS: <a href="obs.html#${id}" target="_blank">overlay</a><br>
-   <button onclick="excluir('${id}')">Excluir</button>
-  </div>`;
- }
+  lista.innerHTML = '';
+  for(const id in perfis){
+    lista.innerHTML += `
+      <div class="perfil">
+        <b>${perfis[id].nome}</b>
+
+        <div class="links">
+          Jogador:
+          <a href="player.html#${id}" target="_blank">Abrir</a>
+        </div>
+
+        <div class="links">
+          OBS:
+          <a href="obs.html#${id}" target="_blank">Overlay</a>
+        </div>
+
+        <button class="excluir" onclick="excluir('${id}')">
+          Excluir
+        </button>
+      </div>
+    `;
+  }
 }
+
 listar();
 </script>
+
 </body>
 </html>
