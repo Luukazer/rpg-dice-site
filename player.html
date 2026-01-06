@@ -133,6 +133,24 @@ function rolar(){
     if(d.valor===12) sucessos+= ordem3.checked ? 3 : 2;
     else if(d.valor>=8) sucessos+=1;
   });
+  
+// ===== ANIMAÇÃO PARA O JOGADOR =====
+playerAnim.style.display = 'block';
+playerNum.style.display = 'none';
+playerLabel.style.display = 'none';
+
+playerVideo.currentTime = 0;
+playerVideo.play();
+
+setTimeout(()=>{
+  playerNum.textContent = sucessos;
+  playerNum.style.display = 'block';
+  playerLabel.style.display = 'block';
+},1000);
+
+setTimeout(()=>{
+  playerAnim.style.display = 'none';
+},7000);
 
   // envia para OBS
   localStorage.setItem(
