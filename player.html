@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Rolagem</title>
+<style>
+body{background:#0f1115;color:#e0e0e0;font-family:Arial;text-align:center}
+button,input{background:#1a1d24;color:#e0e0e0;border:1px solid #333;padding:8px;margin:5px}
+.warn{color:#ff6666}
+</style>
+</head>
+<body>
+
+<h2>Rolagem d12</h2>
+<input type="number" id="qtd" min="1">
+<br>
+<label><input type="checkbox" id="ordem3"> Ordem 3</label>
+<label><input type="checkbox" id="vant"> Vantagem</label>
+<label><input type="checkbox" id="desv"> Desvantagem</label>
+<br>
+<button onclick="rolar()">Lançar</button>
+<p class="warn" id="msg"></p>
+<p id="res"></p>
+
+<script>
+function rolar(){
+ const checks=[ordem3.checked,vant.checked,desv.checked].filter(v=>v).length;
+ if(checks>1){msg.textContent="Escolha apenas um modificador";return;}
+ msg.textContent="";
+ let n=+qtd.value;
+ let dados=[],sucessos=0;
+ for(let i=0;i<n;i++)dados.push(Math.ceil(Math.random()*12));
+
+ if(ordem3.checked)
+  dados.forEach(d=>sucessos+=d==12?3:d>=8?1:0);
+ else{
+  dados.forEach(d=>sucessos+=d==12?2:d>=8?1:0);
+ }
+
+ localStorage.setItem('obsData',JSON.stringify({dados,sucessos,tempo:Date.now()}));
+ res.textContent=`Dados: ${dados.join(', ')} | Sucessos: ${sucessos}`;
+}
+</script>
+</body>
+</html>
