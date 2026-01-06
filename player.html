@@ -94,13 +94,21 @@ function rolar(){
   }
 
   // ===== DESVANTAGEM =====
-  if(desv.checked){
-    const qtd1=dados.filter(d=>d===1).length;
-    for(let i=0;i<qtd1;i++){
-      const idx=dados.findIndex(d=>d>8);
-      if(idx!==-1) dados[idx]=7;
+if(desv.checked){
+  const qtd1 = dados.filter(d => d === 1).length;
+
+  for(let i = 0; i < qtd1; i++){
+    const prioridades = [12,11,10,9,8];
+
+    for(const valor of prioridades){
+      const idx = dados.indexOf(valor);
+      if(idx !== -1){
+        dados[idx] = 7;
+        break;
+      }
     }
   }
+}
 
   // ===== CONTAGEM DE SUCESSOS =====
   let sucessos=0;
