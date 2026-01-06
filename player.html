@@ -2,44 +2,124 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Rolagem</title>
+<title>Rolagem d12</title>
+
 <style>
-body{background:#0f1115;color:#e0e0e0;font-family:Arial;text-align:center}
-button,input{background:#1a1d24;color:#e0e0e0;border:1px solid #333;padding:8px;margin:5px}
-.warn{color:#ff6666}
+body{
+  background:#0f1115;
+  color:#e5e7eb;
+  font-family:Arial, Helvetica, sans-serif;
+  text-align:center;
+  padding-top:40px;
+}
+h2{margin-bottom:20px}
+
+input,button{
+  background:#1a1d24;
+  color:#e5e7eb;
+  border:1px solid #2c2f36;
+  padding:10px 14px;
+  border-radius:6px;
+  font-size:16px;
+}
+
+button{
+  cursor:pointer;
+}
+button:hover{
+  background:#222633;
+}
+
+.mods{
+  margin:20px 0;
+}
+.mods label{
+  margin:0 10px;
+}
+
+.warn{
+  color:#ff6b6b;
+  margin-top:10px;
+}
+
+.result{
+  margin-top:20px;
+  color:#cbd5f5;
+}
 </style>
 </head>
+
 <body>
 
 <h2>Rolagem d12</h2>
-<input type="number" id="qtd" min="1">
-<br>
-<label><input type="checkbox" id="ordem3"> Ordem 3</label>
-<label><input type="checkbox" id="vant"> Vantagem</label>
-<label><input type="checkbox" id="desv"> Desvantagem</label>
-<br>
+
+<input type="number" id="qtd" min="1" placeholder="Quantidade">
+
+<div class="mods">
+  <label><input type="checkbox" id="ordem3"> Ordem 3</label>
+  <label><input type="checkbox" id="vant"> Vantagem</label>
+  <label><input type="checkbox" id="desv"> Desvantagem</label>
+</div>
+
 <button onclick="rolar()">Lançar</button>
+
 <p class="warn" id="msg"></p>
-<p id="res"></p>
+<div class="result" id="res"></div>
 
 <script>
 function rolar(){
- const checks=[ordem3.checked,vant.checked,desv.checked].filter(v=>v).length;
- if(checks>1){msg.textContent="Escolha apenas um modificador";return;}
- msg.textContent="";
- let n=+qtd.value;
- let dados=[],sucessos=0;
- for(let i=0;i<n;i++)dados.push(Math.ceil(Math.random()*12));
+  const checks=[ordem3.checked,vant.checked,desv.checked].filter(v=>v).length;
+  if(checks>1){
+    msg.textContent="Escolha apenas um modificador";
+    return;
+  }
+  msg.textContent="";
+  res.textContent="";
 
- if(ordem3.checked)
-  dados.forEach(d=>sucessos+=d==12?3:d>=8?1:0);
- else{
-  dados.forEach(d=>sucessos+=d==12?2:d>=8?1:0);
- }
+  const n=Number(qtd.value);
+  if(!n || n<1) return;
 
- localStorage.setItem('obsData',JSON.stringify({dados,sucessos,tempo:Date.now()}));
- res.textContent=`Dados: ${dados.join(', ')} | Sucessos: ${sucessos}`;
+  let dados=[];
+  for(let i=0;i<n;i++){
+    dados.push(Math.ceil(Math.random()*12));
+  }
+
+  // ===== VANTAGEM =====
+  if(vant.checked){
+    const qtd12=dados.filter(d=>d===12).length;
+    for(let i=0;i<qtd12;i++){
+      const idx=dados.findIndex(d=>d<7);
+      if(idx!==-1) dados[idx]=8;
+    }
+  }
+
+  // ===== DESVANTAGEM =====
+  if(desv.checked){
+    const qtd1=dados.filter(d=>d===1).length;
+    for(let i=0;i<qtd1;i++){
+      const idx=dados.findIndex(d=>d>8);
+      if(idx!==-1) dados[idx]=7;
+    }
+  }
+
+  // ===== CONTAGEM DE SUCESSOS =====
+  let sucessos=0;
+  dados.forEach(d=>{
+    if(d===12) sucessos+= ordem3.checked ? 3 : 2;
+    else if(d>=8) sucessos+=1;
+  });
+
+  // envia para o OBS
+  localStorage.setItem(
+    'obsData',
+    JSON.stringify({sucessos,tempo:Date.now()})
+  );
+
+  res.innerHTML=
+    `<b>Dados:</b> ${dados.join(', ')}<br>
+     <b>Sucessos:</b> ${sucessos}`;
 }
 </script>
+
 </body>
 </html>
