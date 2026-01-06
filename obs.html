@@ -2,30 +2,71 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+
 <style>
-body{margin:0;background:transparent;overflow:hidden}
-#wrap{text-align:center;position:absolute;top:20%;width:100%}
-#num{font-size:72px;color:#dbe7ff;
- text-shadow:0 0 10px #4a6cff;display:none}
-video{width:300px}
+body{
+  margin:0;
+  background:transparent;
+  overflow:hidden;
+}
+
+#container{
+  position:absolute;
+  top:20%;
+  width:100%;
+  text-align:center;
+}
+
+#sucessos{
+  font-size:72px;
+  font-family:Arial, Helvetica, sans-serif;
+  color:#dbe7ff;
+  text-shadow:
+    0 0 8px rgba(90,120,255,.6),
+    0 0 18px rgba(90,120,255,.4);
+  display:none;
+  margin-bottom:10px;
+}
+
+video{
+  width:320px;
+  display:none;
+}
 </style>
 </head>
+
 <body>
 
-<div id="wrap">
- <div id="num"></div>
- <video id="vid" src="dice.webm"></video>
+<div id="container">
+  <div id="sucessos"></div>
+  <video id="dice" src="dice.webm" muted playsinline></video>
 </div>
 
 <script>
+let lastTime=0;
+
 setInterval(()=>{
- const d=JSON.parse(localStorage.getItem('obsData')||'{}');
- if(!d.tempo)return;
- vid.currentTime=0;vid.play();
- setTimeout(()=>{num.textContent=d.sucessos;num.style.display='block'},1000);
- setTimeout(()=>{num.style.display='none'},7000);
- localStorage.removeItem('obsData');
-},1000);
+  const data=JSON.parse(localStorage.getItem('obsData')||'{}');
+  if(!data.tempo || data.tempo===lastTime) return;
+
+  lastTime=data.tempo;
+
+  dice.style.display='block';
+  sucessos.style.display='none';
+
+  dice.currentTime=0;
+  dice.play();
+
+  setTimeout(()=>{
+    sucessos.textContent=data.sucessos;
+    sucessos.style.display='block';
+  },1000);
+
+  setTimeout(()=>{
+    dice.style.display='none';
+    sucessos.style.display='none';
+  },7000);
+},500);
 </script>
 
 </body>
