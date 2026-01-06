@@ -74,58 +74,69 @@ function rolar(){
     return;
   }
   msg.textContent="";
-  res.textContent="";
+  res.innerHTML="";
 
   const n=Number(qtd.value);
   if(!n || n<1) return;
 
   let dados=[];
   for(let i=0;i<n;i++){
-    dados.push(Math.ceil(Math.random()*12));
+    dados.push({ valor: Math.ceil(Math.random()*12) });
   }
 
   // ===== VANTAGEM =====
   if(vant.checked){
-    const qtd12=dados.filter(d=>d===12).length;
+    const qtd12 = dados.filter(d=>d.valor===12).length;
     for(let i=0;i<qtd12;i++){
-      const idx=dados.findIndex(d=>d<7);
-      if(idx!==-1) dados[idx]=8;
-    }
-  }
-
-  // ===== DESVANTAGEM =====
-if(desv.checked){
-  const qtd1 = dados.filter(d => d === 1).length;
-
-  for(let i = 0; i < qtd1; i++){
-    const prioridades = [12,11,10,9,8];
-
-    for(const valor of prioridades){
-      const idx = dados.indexOf(valor);
-      if(idx !== -1){
-        dados[idx] = 7;
-        break;
+      const alvo = dados.find(d=>d.valor < 7);
+      if(alvo){
+        alvo.original = alvo.valor;
+        alvo.valor = 8;
       }
     }
   }
-}
 
-  // ===== CONTAGEM DE SUCESSOS =====
+  // ===== DESVANTAGEM (prioriza maiores) =====
+  if(desv.checked){
+    const qtd1 = dados.filter(d=>d.valor===1).length;
+    const prioridades = [12,11,10,9,8];
+
+    for(let i=0;i<qtd1;i++){
+      for(const p of prioridades){
+        const alvo = dados.find(d=>d.valor===p);
+        if(alvo){
+          alvo.original = alvo.valor;
+          alvo.valor = 7;
+          break;
+        }
+      }
+    }
+  }
+
+  // ===== SUCESSOS =====
   let sucessos=0;
   dados.forEach(d=>{
-    if(d===12) sucessos+= ordem3.checked ? 3 : 2;
-    else if(d>=8) sucessos+=1;
+    if(d.valor===12) sucessos+= ordem3.checked ? 3 : 2;
+    else if(d.valor>=8) sucessos+=1;
   });
 
-  // envia para o OBS
+  // envia para OBS
   localStorage.setItem(
     'obsData',
     JSON.stringify({sucessos,tempo:Date.now()})
   );
 
-  res.innerHTML=
-    `<b>Dados:</b> ${dados.join(', ')}<br>
-     <b>Sucessos:</b> ${sucessos}`;
+  // exibição para o jogador
+  const textoDados = dados.map(d=>{
+    return d.original
+      ? `${d.valor} (era ${d.original})`
+      : d.valor;
+  }).join(', ');
+
+  res.innerHTML = `
+    <b>Dados:</b> ${textoDados}<br>
+    <b>Sucessos:</b> ${sucessos}
+  `;
 }
 </script>
 
