@@ -20,7 +20,7 @@ body{
   background:#151c28;
   padding:20px;
   border-radius:10px;
-  width:300px;
+  width:320px;
   text-align:center;
   box-shadow:0 0 20px rgba(0,0,0,.6);
 }
@@ -50,6 +50,8 @@ label{
   margin-top:10px;
   font-size:20px;
   font-weight:bold;
+  opacity:0;
+  transition:opacity .5s;
 }
 
 #dadosIndividuais{
@@ -57,6 +59,8 @@ label{
   font-size:14px;
   color:#ccc;
   word-wrap:break-word;
+  opacity:0;
+  transition:opacity .5s;
 }
 </style>
 </head>
@@ -120,7 +124,6 @@ function rolar(){
     exibicao.push(v.toString());
   }
 
-  // DESVANTAGEM
   if(desvantagem && dados.includes(1)){
     let alvo = dados
       .map((v,i)=>({v,i}))
@@ -133,7 +136,6 @@ function rolar(){
     }
   }
 
-  // VANTAGEM
   if(vantagem && dados.includes(12)){
     let idx = dados.findIndex(v=>v<7);
     if(idx !== -1){
@@ -148,11 +150,19 @@ function rolar(){
     if(v===12) sucessos += ordem3 ? 3 : 2;
   });
 
-  document.getElementById("sucessosPlayer").textContent =
-    "Sucessos: " + sucessos;
+  const sEl = document.getElementById("sucessosPlayer");
+  const dEl = document.getElementById("dadosIndividuais");
 
-  document.getElementById("dadosIndividuais").textContent =
-    "Dados: " + exibicao.join(", ");
+  sEl.textContent = "Sucessos: " + sucessos;
+  dEl.textContent = "Dados: " + exibicao.join(", ");
+
+  sEl.style.opacity = 1;
+  dEl.style.opacity = 1;
+
+  setTimeout(()=>{
+    sEl.style.opacity = 0;
+    dEl.style.opacity = 0;
+  },7000);
 
   db.ref("resultado").set({
     sucessos,
