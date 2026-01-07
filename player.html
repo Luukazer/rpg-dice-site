@@ -20,7 +20,7 @@ body{
   background:#151c28;
   padding:20px;
   border-radius:10px;
-  width:280px;
+  width:300px;
   text-align:center;
   box-shadow:0 0 20px rgba(0,0,0,.6);
 }
@@ -46,8 +46,14 @@ label{
   font-size:14px;
 }
 
+#sucessosPlayer{
+  margin-top:10px;
+  font-size:20px;
+  font-weight:bold;
+}
+
 #dadosIndividuais{
-  margin-top:12px;
+  margin-top:10px;
   font-size:14px;
   color:#ccc;
   word-wrap:break-word;
@@ -58,7 +64,7 @@ label{
 <body>
 
 <div id="painel">
-  <h3>Rolagem</h3>
+  <h3>Rolagem de Dados</h3>
 
   <input type="number" id="qtd" placeholder="Quantidade de d12">
 
@@ -68,6 +74,7 @@ label{
 
   <button onclick="rolar()">Lançar</button>
 
+  <div id="sucessosPlayer"></div>
   <div id="dadosIndividuais"></div>
 </div>
 
@@ -90,9 +97,14 @@ const db = firebase.database();
 
 function rolar(){
   const qtd = parseInt(document.getElementById("qtd").value);
-  const ordem3 = ordem3El = document.getElementById("ordem3").checked;
+  const ordem3 = document.getElementById("ordem3").checked;
   const vantagem = document.getElementById("vantagem").checked;
   const desvantagem = document.getElementById("desvantagem").checked;
+
+  if(!qtd || qtd < 1){
+    alert("Digite um valor válido.");
+    return;
+  }
 
   if([ordem3, vantagem, desvantagem].filter(v=>v).length > 1){
     alert("Marque apenas um modificador.");
@@ -108,6 +120,7 @@ function rolar(){
     exibicao.push(v.toString());
   }
 
+  // DESVANTAGEM
   if(desvantagem && dados.includes(1)){
     let alvo = dados
       .map((v,i)=>({v,i}))
@@ -120,6 +133,7 @@ function rolar(){
     }
   }
 
+  // VANTAGEM
   if(vantagem && dados.includes(12)){
     let idx = dados.findIndex(v=>v<7);
     if(idx !== -1){
@@ -133,6 +147,9 @@ function rolar(){
     if(v>=8 && v<=11) sucessos++;
     if(v===12) sucessos += ordem3 ? 3 : 2;
   });
+
+  document.getElementById("sucessosPlayer").textContent =
+    "Sucessos: " + sucessos;
 
   document.getElementById("dadosIndividuais").textContent =
     "Dados: " + exibicao.join(", ");
