@@ -2,45 +2,40 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Admin Perfis</title>
+<title>Player</title>
+<style>
+body{background:#111;color:#fff;font-family:Arial;text-align:center}
+</style>
 </head>
 <body>
 
-<h2>Criar Perfil</h2>
-<input id="nome" placeholder="Nome do jogador">
-<button onclick="criar()">Criar</button>
+<h1 id="nome"></h1>
+<button onclick="rolar()">Lançar Dados</button>
 
-<ul id="lista"></ul>
+<div id="resultado"></div>
 
 <script src="firebase.js"></script>
 <script>
-function criar(){
-  const nome = document.getElementById("nome").value;
-  const id = Math.random().toString(36).substr(2,9);
+const perfil = location.hash.replace("#","");
+if(!perfil) alert("Perfil inválido");
 
-  db.ref("perfis/"+id).set({ nome });
+db.ref("perfis/"+perfil).once("value", s=>{
+  document.getElementById("nome").innerText = s.val().nome;
+});
 
-  listar();
-}
+function rolar(){
+  const dados = Array.from({length:5}, ()=>Math.ceil(Math.random()*12));
+  const sucessos = dados.filter(d=>d>=8).length;
 
-function listar(){
-  db.ref("perfis").once("value", snap=>{
-    const ul = document.getElementById("lista");
-    ul.innerHTML = "";
-    snap.forEach(p=>{
-      const id = p.key;
-      const nome = p.val().nome;
-      ul.innerHTML += `
-        <li>
-          <b>${nome}</b><br>
-          Player: <a href="player.html#${id}" target="_blank">link</a><br>
-          OBS: <a href="obs.html#${id}" target="_blank">link</a>
-        </li><br>
-      `;
-    });
+  db.ref("rolagens/"+perfil).set({
+    dados,
+    sucessos,
+    ts: Date.now()
   });
+
+  document.getElementById("resultado").innerText =
+    dados.join(", ")+" | Sucessos: "+sucessos;
 }
-listar();
 </script>
 
 </body>
