@@ -20,6 +20,8 @@ body{
 video{
   width:220px;
   height:220px;
+  opacity:0;
+  transition:opacity .5s;
 }
 
 #texto{
@@ -29,6 +31,7 @@ video{
   transform:translate(-50%,-50%);
   text-align:center;
   opacity:0;
+  transition:opacity .5s;
 }
 
 #numero{
@@ -74,32 +77,32 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 const video = document.getElementById("video");
-const numero = document.getElementById("numero");
 const texto = document.getElementById("texto");
+const numero = document.getElementById("numero");
 
 db.ref("resultado").on("value", snap=>{
   if(!snap.exists()) return;
 
   const {sucessos} = snap.val();
 
-  // RESET TOTAL
   texto.style.opacity = 0;
+  video.style.opacity = 0;
   numero.textContent = "";
+
   video.pause();
   video.currentTime = 0;
 
-  // TOCA VÍDEO
+  video.style.opacity = 1;
   video.play();
 
-  // MOSTRA TEXTO DEPOIS DE 1s
   setTimeout(()=>{
     numero.textContent = sucessos;
     texto.style.opacity = 1;
   },1000);
 
-  // LIMPA TUDO AO FINAL
   setTimeout(()=>{
     texto.style.opacity = 0;
+    video.style.opacity = 0;
     video.pause();
     video.currentTime = 0;
   },7000);
