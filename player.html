@@ -1,20 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
+  <meta charset="UTF-8">
+  <title>Player</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-  <h1>Rolagem</h1>
-  <input id="diceCount" type="number" min="1" value="1">
-  <br>
-  <label><input type="checkbox" id="ordem3"> Ordem 3</label><br>
-  <label><input type="checkbox" id="vantagem"> Vantagem</label><br>
-  <label><input type="checkbox" id="desvantagem"> Desvantagem</label><br>
-  <button onclick="rollDice()">Rolar</button>
-</div>
+  <div class="container">
+    <h1>Rolagem de Dados</h1>
 
-<script src="firebase.js"></script>
-<script src="player.js"></script>
+    <input id="diceCount" type="number" min="1" value="1">
+
+    <label>
+      <input type="checkbox" id="ordem3"> Ordem 3
+    </label><br>
+
+    <label>
+      <input type="checkbox" id="vantagem"> Vantagem
+    </label><br>
+
+    <label>
+      <input type="checkbox" id="desvantagem"> Desvantagem
+    </label><br><br>
+
+    <button onclick="rollDice()">Rolar Dados</button>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <!-- App -->
+  <script src="firebase.js"></script>
+  <script src="player.js"></script>
 </body>
 </html>
