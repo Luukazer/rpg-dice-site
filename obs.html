@@ -1,42 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Player</title>
-<style>
-body{background:#111;color:#fff;font-family:Arial;text-align:center}
-</style>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="overlay">
+  <video id="vid" src="dice_animation.webm"></video>
 
-<h1 id="nome"></h1>
-<button onclick="rolar()">Lançar Dados</button>
-
-<div id="resultado"></div>
+  <div class="result" id="result">
+    <div class="success-count" id="count"></div>
+    <div class="success-label">Sucessos</div>
+  </div>
 
 <script src="firebase.js"></script>
-<script>
-const perfil = location.hash.replace("#","");
-if(!perfil) alert("Perfil inválido");
-
-db.ref("perfis/"+perfil).once("value", s=>{
-  document.getElementById("nome").innerText = s.val().nome;
-});
-
-function rolar(){
-  const dados = Array.from({length:5}, ()=>Math.ceil(Math.random()*12));
-  const sucessos = dados.filter(d=>d>=8).length;
-
-  db.ref("rolagens/"+perfil).set({
-    dados,
-    sucessos,
-    ts: Date.now()
-  });
-
-  document.getElementById("resultado").innerText =
-    dados.join(", ")+" | Sucessos: "+sucessos;
-}
-</script>
-
+<script src="obs.js"></script>
 </body>
 </html>
