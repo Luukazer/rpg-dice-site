@@ -99,6 +99,10 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// 🔹 PERFIL VEM DO LINK
+const params = new URLSearchParams(window.location.search);
+const perfil = params.get("perfil") || "default";
+
 function rolar(){
   const qtd = parseInt(document.getElementById("qtd").value);
   const ordem3 = document.getElementById("ordem3").checked;
@@ -164,7 +168,8 @@ function rolar(){
     dEl.style.opacity = 0;
   },7000);
 
-  db.ref("resultado").set({
+  // 🔹 SALVA NO PERFIL CERTO
+  db.ref("resultados/" + perfil).set({
     sucessos,
     time: Date.now()
   });
