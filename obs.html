@@ -13,23 +13,28 @@ body{
 
 #overlay{
   position:relative;
-  width:220px;
-  height:220px;
+  width:240px;
+  height:240px;
+}
+
+#videoContainer{
+  position:absolute;
+  inset:0;
 }
 
 video{
-  width:220px;
-  height:220px;
-  opacity:0;
-  transition:opacity .5s;
+  width:240px;
+  height:240px;
 }
 
 #texto{
   position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  text-align:center;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
   opacity:0;
   transition:opacity .5s;
 }
@@ -38,11 +43,11 @@ video{
   font-size:80px;
   color:white;
   text-shadow:0 0 15px white;
+  line-height:1;
 }
 
 #label{
   font-size:26px;
-  margin-top:-10px;
   color:white;
 }
 </style>
@@ -51,7 +56,7 @@ video{
 <body>
 
 <div id="overlay">
-  <video id="video" src="dice_animation.webm" muted playsinline></video>
+  <div id="videoContainer"></div>
 
   <div id="texto">
     <div id="numero"></div>
@@ -76,39 +81,42 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// 🔹 PERFIL VEM DO LINK
 const params = new URLSearchParams(window.location.search);
 const perfil = params.get("perfil") || "default";
 
-const video = document.getElementById("video");
+const container = document.getElementById("videoContainer");
 const texto = document.getElementById("texto");
 const numero = document.getElementById("numero");
 
 db.ref("resultados/" + perfil).on("value", snap=>{
   if(!snap.exists()) return;
 
-  const {sucessos} = snap.val();
+  const { sucessos } = snap.val();
 
+  // 🔥 LIMPA TUDO
   texto.style.opacity = 0;
-  video.style.opacity = 0;
   numero.textContent = "";
+  container.innerHTML = "";
 
-  video.pause();
-  video.currentTime = 0;
+  // 🔥 CRIA UM VIDEO NOVO
+  const video = document.createElement("video");
+  video.src = "dice_animation.webm";
+  video.autoplay = true;
+  video.muted = true;
+  video.playsInline = true;
 
-  video.style.opacity = 1;
-  video.play();
+  container.appendChild(video);
 
+  // 🔹 MOSTRA RESULTADO APÓS 1s
   setTimeout(()=>{
     numero.textContent = sucessos;
     texto.style.opacity = 1;
   },1000);
 
+  // 🔹 LIMPA TUDO APÓS 7s
   setTimeout(()=>{
     texto.style.opacity = 0;
-    video.style.opacity = 0;
-    video.pause();
-    video.currentTime = 0;
+    container.innerHTML = "";
   },7000);
 });
 </script>
