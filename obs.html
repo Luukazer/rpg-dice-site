@@ -22,11 +22,6 @@ body{
   inset:0;
 }
 
-video{
-  width:240px;
-  height:240px;
-}
-
 #texto{
   position:absolute;
   inset:0;
@@ -34,7 +29,6 @@ video{
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  pointer-events:none;
   opacity:0;
   transition:opacity .5s;
 }
@@ -43,7 +37,6 @@ video{
   font-size:80px;
   color:white;
   text-shadow:0 0 15px white;
-  line-height:1;
 }
 
 #label{
@@ -68,6 +61,17 @@ video{
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
+// 🔒 CORREÇÃO AUTOMÁTICA DE LINK (# → ?perfil=)
+if (!window.location.search && window.location.hash) {
+  const perfil = window.location.hash.replace("#","");
+  window.location.replace(
+    window.location.pathname + "?perfil=" + perfil
+  );
+}
+
+const params = new URLSearchParams(window.location.search);
+const perfil = params.get("perfil") || "default";
+
 const firebaseConfig = {
   apiKey: "AIzaSyBzniGkaFn9HzyeS9XhQ9cAETXWIPFcsQw",
   authDomain: "sociedade-mitra-dados.firebaseapp.com",
@@ -81,24 +85,19 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-const params = new URLSearchParams(window.location.search);
-const perfil = params.get("perfil") || "default";
-
 const container = document.getElementById("videoContainer");
 const texto = document.getElementById("texto");
 const numero = document.getElementById("numero");
 
-db.ref("resultados/" + perfil).on("value", snap=>{
+db.ref("resultados/"+perfil).on("value", snap=>{
   if(!snap.exists()) return;
 
-  const { sucessos } = snap.val();
+  const {sucessos} = snap.val();
 
-  // 🔥 LIMPA TUDO
   texto.style.opacity = 0;
   numero.textContent = "";
   container.innerHTML = "";
 
-  // 🔥 CRIA UM VIDEO NOVO
   const video = document.createElement("video");
   video.src = "dice_animation.webm";
   video.autoplay = true;
@@ -107,13 +106,11 @@ db.ref("resultados/" + perfil).on("value", snap=>{
 
   container.appendChild(video);
 
-  // 🔹 MOSTRA RESULTADO APÓS 1s
   setTimeout(()=>{
     numero.textContent = sucessos;
     texto.style.opacity = 1;
   },1000);
 
-  // 🔹 LIMPA TUDO APÓS 7s
   setTimeout(()=>{
     texto.style.opacity = 0;
     container.innerHTML = "";
