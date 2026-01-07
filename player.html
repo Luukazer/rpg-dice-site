@@ -3,13 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <title>Player</title>
-<link rel="stylesheet" href="style.css">
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+body{
+  background:#111;
+  color:#eee;
+  font-family:Arial, sans-serif;
+  padding:20px;
+}
+input,button{
+  padding:8px;
+  margin:6px 0;
+  font-size:16px;
+}
+.mods label{
+  display:block;
+}
+#erro{color:#ff5555;}
+</style>
 </head>
-<body class="player">
+<body>
 
-<h2>Rolagem</h2>
+<h2>Rolagem de Dados</h2>
 
-<input id="qtd" type="number" min="1" placeholder="Qtd d12">
+<input id="qtd" type="number" min="1" placeholder="Quantidade de d12">
 
 <div class="mods">
   <label><input type="checkbox" id="ordem3"> Ordem 3</label>
@@ -22,14 +42,23 @@
 <p id="erro"></p>
 
 <script>
-const canal = new BroadcastChannel('dados_rpg');
+const firebaseConfig = {
+  apiKey: "AIzaSyBzniGkaFn9HzyeS9XhQ9cAETXWIPFcsQw",
+  authDomain: "sociedade-mitra-dados.firebaseapp.com",
+  databaseURL: "https://sociedade-mitra-dados-default-rtdb.firebaseio.com",
+  projectId: "sociedade-mitra-dados",
+  storageBucket: "sociedade-mitra-dados.firebasestorage.app",
+  messagingSenderId: "155136545326",
+  appId: "1:155136545326:web:b9721595277fb7cef685bf"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
 function rolar(){
   erro.textContent = '';
 
-  const mods = [ordem3.checked, vantagem.checked, desvantagem.checked]
-    .filter(v=>v).length;
-
+  const mods = [ordem3.checked, vantagem.checked, desvantagem.checked].filter(v=>v).length;
   if(mods > 1){
     erro.textContent = 'Escolha apenas um modificador';
     return;
@@ -43,27 +72,23 @@ function rolar(){
     dados.push(Math.floor(Math.random()*12)+1);
   }
 
-  // DESVANTAGEM (prioriza maiores)
-  if(desvantagem.checked){
+  // Desvantagem (prioriza maiores)
+  if(desvantagem.checked && dados.includes(1)){
     dados.sort((a,b)=>b-a);
-    if(dados.includes(1)){
-      for(let i=0;i<dados.length;i++){
-        if(dados[i] >= 8){
-          dados[i] = 7;
-          break;
-        }
+    for(let i=0;i<dados.length;i++){
+      if(dados[i] >= 8){
+        dados[i] = 7;
+        break;
       }
     }
   }
 
-  // VANTAGEM
-  if(vantagem.checked){
-    if(dados.includes(12)){
-      for(let i=0;i<dados.length;i++){
-        if(dados[i] < 7){
-          dados[i] = 8;
-          break;
-        }
+  // Vantagem
+  if(vantagem.checked && dados.includes(12)){
+    for(let i=0;i<dados.length;i++){
+      if(dados[i] < 7){
+        dados[i] = 8;
+        break;
       }
     }
   }
@@ -74,10 +99,9 @@ function rolar(){
     else if(d >= 8) sucessos += 1;
   });
 
-  // ENVIA PARA O OBS
-  canal.postMessage({
+  db.ref("dados").set({
     sucessos,
-    dados
+    timestamp: Date.now()
   });
 }
 </script>
