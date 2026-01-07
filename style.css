@@ -45,45 +45,44 @@ input, button {
 .obs-body {
   background: transparent;
   margin: 0;
-  width: 100vw;
-  height: 100vh;
   overflow: hidden;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-/* Palco do dado */
+/* Canvas fixo */
 .obs-stage {
   position: relative;
-  width: 400px;
-  height: 400px;
+  width: 1920px;
+  height: 1080px;
 }
 
-/* Vídeo */
+/* Vídeo central */
 #diceVideo {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  width: 400px;
+  height: 400px;
+  top: 340px;
+  left: 760px;
+
   object-fit: contain;
   opacity: 0;
   transition: opacity 0.5s ease;
 }
 
-/* Texto */
+/* Texto sobre o vídeo */
 #result {
   position: absolute;
-  inset: 0;
+  top: 340px;
+  left: 760px;
+  width: 400px;
+  height: 400px;
+
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
 
   text-shadow: 0 0 15px white;
   opacity: 0;
-  pointer-events: none;
   transition: opacity 0.5s ease;
 }
 
@@ -93,7 +92,6 @@ input, button {
 
 #diceVideo.show {
   opacity: 1;
-}
 }
 /* UTIL */
 .hidden {
