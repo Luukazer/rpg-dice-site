@@ -40,7 +40,6 @@ input, button {
 .label {
   font-size: 20px;
 }
-
 /* OBS */
 .obs-body {
   background: transparent;
@@ -48,50 +47,63 @@ input, button {
   overflow: hidden;
 }
 
-/* Canvas fixo */
+/* Canvas fixo OBS */
 .obs-stage {
   position: relative;
   width: 1920px;
   height: 1080px;
 }
 
-/* Vídeo */
-#diceVideo {
+/* Container único (vídeo + texto) */
+.dice-wrapper {
   position: absolute;
-  width: 400px;
-  height: 400px;
   top: 340px;
   left: 760px;
-  object-fit: contain;
+  width: 400px;
+  height: 400px;
+
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.6s ease;
 }
 
-/* Texto sobre o vídeo */
+/* quando ativo */
+.dice-wrapper.show {
+  opacity: 1;
+}
+
+/* Vídeo */
+#diceVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Texto por cima */
 .result {
   position: absolute;
-  top: 340px;
-  left: 760px;
-  width: 400px;
-  height: 400px;
+  inset: 0;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  text-shadow: 0 0 15px white;
-  opacity: 0;
   pointer-events: none;
-  transition: opacity 0.5s ease;
+  text-shadow:
+    0 0 8px white,
+    0 0 16px white,
+    0 0 24px rgba(255,255,255,0.8);
 }
 
-.result.show {
-  opacity: 1;
+.success-count {
+  font-size: 64px;
+  font-weight: bold;
+  color: white;
 }
 
-#diceVideo.show {
-  opacity: 1;
+.success-label {
+  font-size: 22px;
+  color: white;
 }
 /* UTIL */
 .hidden {
