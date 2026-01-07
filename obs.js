@@ -1,10 +1,9 @@
+console.log("OBS JS NOVO CARREGADO");
+
 const params = new URLSearchParams(window.location.search);
 const playerId = params.get("playerId");
 
-if (!playerId) {
-  console.error("OBS sem playerId");
-  throw new Error("OBS sem playerId");
-}
+if (!playerId) throw new Error("OBS sem playerId");
 
 const rollRef = db.ref("players/" + playerId + "/lastRoll");
 
@@ -18,7 +17,7 @@ if (!wrapper || !video || !count) {
     video,
     count
   });
-  throw new Error("HTML do OBS incompatível com obs.js");
+  return;
 }
 
 let lastTimestamp = 0;
@@ -30,20 +29,16 @@ rollRef.on("value", snapshot => {
   if (!data.timestamp || data.timestamp <= lastTimestamp) return;
   lastTimestamp = data.timestamp;
 
-  // reset
   wrapper.classList.remove("show");
   video.pause();
   video.currentTime = 0;
 
-  // força reflow (bug real de browser/OBS)
   void wrapper.offsetWidth;
 
-  // mostra tudo
   count.textContent = data.successes;
   wrapper.classList.add("show");
   video.play();
 
-  // esconde tudo junto
   setTimeout(() => {
     wrapper.classList.remove("show");
     video.pause();
