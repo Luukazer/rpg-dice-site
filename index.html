@@ -1,70 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style>
-body {
-  background:#111;
-  color:#eee;
-  font-family: Arial, sans-serif;
-  padding:40px;
-}
-input, button {
-  padding:8px;
-  margin:5px 0;
-}
-button {
-  cursor:pointer;
-}
-li {
-  margin-bottom:15px;
-}
-a {
-  color:#6cf;
-}
-</style>
-
-  
-<meta charset="UTF-8">
-<title>Admin Perfis</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<h2>Criar Perfil</h2>
-<input id="nome" placeholder="Nome do jogador">
-<button onclick="criar()">Criar</button>
-
-<ul id="lista"></ul>
+<div class="container">
+  <h1>Mestre</h1>
+  <input id="playerName" placeholder="Nome do Player">
+  <button onclick="createPlayer()">Criar Player</button>
+  <ul id="playerList"></ul>
+</div>
 
 <script src="firebase.js"></script>
-<script>
-function criar(){
-  const nome = document.getElementById("nome").value;
-  const id = Math.random().toString(36).substr(2,9);
-
-  db.ref("perfis/"+id).set({ nome });
-
-  listar();
-}
-
-function listar(){
-  db.ref("perfis").once("value", snap=>{
-    const ul = document.getElementById("lista");
-    ul.innerHTML = "";
-    snap.forEach(p=>{
-      const id = p.key;
-      const nome = p.val().nome;
-      ul.innerHTML += `
-        <li>
-          <b>${nome}</b><br>
-          Player: <a href="player.html#${id}" target="_blank">link</a><br>
-          OBS: <a href="obs.html#${id}" target="_blank">link</a>
-        </li><br>
-      `;
-    });
-  });
-}
-listar();
-</script>
-
+<script src="admin.js"></script>
 </body>
 </html>
