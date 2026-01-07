@@ -1,167 +1,40 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Player</title>
-
 <style>
-body{
-  margin:0;
-  background:#0f1117;
-  color:#eaeaea;
-  font-family:Arial, sans-serif;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
-
-#box{
-  background:#151822;
-  padding:20px;
-  border-radius:10px;
-  width:320px;
-  text-align:center;
-}
-
-input, button{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  font-size:16px;
-}
-
-button{
-  cursor:pointer;
-}
-
-label{
-  display:block;
-  margin-top:8px;
-}
-
-#result{
-  margin-top:15px;
-  opacity:0;
-  transition:opacity .5s;
-}
+body{background:#111;color:#fff;font-family:Arial;text-align:center}
 </style>
 </head>
-
 <body>
 
-<div id="box">
-  <h2>Rolar Dados</h2>
+<h1 id="nome"></h1>
+<button onclick="rolar()">Lançar Dados</button>
 
-  <input id="qtd" type="number" min="1" placeholder="Quantidade de d12">
+<div id="resultado"></div>
 
-  <label><input type="checkbox" id="ordem3"> Ordem 3</label>
-  <label><input type="checkbox" id="vantagem"> Vantagem</label>
-  <label><input type="checkbox" id="desvantagem"> Desvantagem</label>
-
-  <button onclick="rolar()">Lançar</button>
-
-  <div id="result"></div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
+<script src="firebase.js"></script>
 <script>
-// 🔒 CORREÇÃO AUTOMÁTICA DE LINK (# → ?perfil=)
-if (!window.location.search && window.location.hash) {
-  const perfil = window.location.hash.replace("#","");
-  window.location.replace(
-    window.location.pathname + "?perfil=" + perfil
-  );
-}
+const perfil = location.hash.replace("#","");
+if(!perfil) alert("Perfil inválido");
 
-const params = new URLSearchParams(window.location.search);
-const perfil = params.get("perfil") || "default";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBzniGkaFn9HzyeS9XhQ9cAETXWIPFcsQw",
-  authDomain: "sociedade-mitra-dados.firebaseapp.com",
-  databaseURL: "https://sociedade-mitra-dados-default-rtdb.firebaseio.com",
-  projectId: "sociedade-mitra-dados",
-  storageBucket: "sociedade-mitra-dados.firebasestorage.app",
-  messagingSenderId: "155136545326",
-  appId: "1:155136545326:web:b9721595277fb7cef685bf"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+db.ref("perfis/"+perfil).once("value", s=>{
+  document.getElementById("nome").innerText = s.val().nome;
+});
 
 function rolar(){
-  const qtd = Number(document.getElementById("qtd").value);
-  if(qtd <= 0) return;
+  const dados = Array.from({length:5}, ()=>Math.ceil(Math.random()*12));
+  const sucessos = dados.filter(d=>d>=8).length;
 
-  const checks = ["ordem3","vantagem","desvantagem"]
-    .filter(id=>document.getElementById(id).checked);
+  db.ref("rolagens/"+perfil).set({
+    dados,
+    sucessos,
+    ts: Date.now()
+  });
 
-  if(checks.length > 1){
-    alert("Escolha apenas um modificador.");
-    return;
-  }
-
-  let dados = [];
-  for(let i=0;i<qtd;i++) dados.push(Math.ceil(Math.random()*12));
-
-  let sucessos = 0;
-  let textoDados = [...dados];
-
-  // Ordem 3
-  if(ordem3.checked){
-    dados.forEach(v=>{
-      if(v >= 8 && v <= 11) sucessos++;
-      if(v === 12) sucessos += 3;
-    });
-  }
-
-  // Vantagem
-  else if(vantagem.checked){
-    let baixos = dados.filter(v=>v<7).sort((a,b)=>a-b);
-    dados.forEach(v=>{
-      if(v === 12 && baixos.length){
-        const trocado = baixos.shift();
-        textoDados[textoDados.indexOf(trocado)] = `8 (${trocado})`;
-        sucessos += 3;
-      }else if(v >= 8 && v <= 11) sucessos++;
-      else if(v === 12) sucessos += 2;
-    });
-  }
-
-  // Desvantagem
-  else if(desvantagem.checked){
-    let altos = dados.filter(v=>v>=8).sort((a,b)=>b-a);
-    dados.forEach(v=>{
-      if(v === 1 && altos.length){
-        const trocado = altos.shift();
-        textoDados[textoDados.indexOf(trocado)] = `7 (${trocado})`;
-      }else if(v >= 8 && v <= 11) sucessos++;
-      else if(v === 12) sucessos += 2;
-    });
-  }
-
-  // Normal
-  else{
-    dados.forEach(v=>{
-      if(v >= 8 && v <= 11) sucessos++;
-      if(v === 12) sucessos += 2;
-    });
-  }
-
-  document.getElementById("result").innerHTML =
-    `<b>Sucessos:</b> ${sucessos}<br><small>${textoDados.join(", ")}</small>`;
-
-  document.getElementById("result").style.opacity = 1;
-
-  db.ref("resultados/"+perfil).set({sucessos});
-
-  // some após 7s
-  setTimeout(()=>{
-    document.getElementById("result").style.opacity = 0;
-  },7000);
+  document.getElementById("resultado").innerText =
+    dados.join(", ")+" | Sucessos: "+sucessos;
 }
 </script>
 
