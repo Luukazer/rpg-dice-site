@@ -8,16 +8,17 @@ if (!playerId) {
 
 const playerRef = db.ref("players/" + playerId);
 
+// ELEMENTOS DE TELA
+const resultsBox = document.getElementById("results");
+const diceResultsDiv = document.getElementById("diceResults");
+const successCountDiv = document.getElementById("successCount");
+const video = document.getElementById("diceVideo");
+
 function rollDice() {
   const qtd = parseInt(document.getElementById("diceCount").value);
   const ordem3 = document.getElementById("ordem3").checked;
   const vantagem = document.getElementById("vantagem").checked;
   const desvantagem = document.getElementById("desvantagem").checked;
-
-  if (vantagem && desvantagem) {
-    alert("Vantagem e Desvantagem não podem ser usadas juntas.");
-    return;
-  }
 
   let results = [];
   let display = [];
@@ -30,19 +31,26 @@ function rollDice() {
 
   // VANTAGEM
   if (vantagem && results.includes(12)) {
-    let idx = results.findIndex(r => r < 8);
-    if (idx !== -1) {
-      display[idx] = `8(${results[idx]})`;
-      results[idx] = 8;
+    let lows = results
+      .map((v, i) => ({ v, i }))
+      .filter(o => o.v < 8);
+
+    if (lows.length) {
+      let target = lows.sort((a, b) => a.v - b.v)[0];
+      display[target.i] = `8(${results[target.i]})`;
+      results[target.i] = 8;
     }
   }
 
   // DESVANTAGEM
   if (desvantagem && results.includes(1)) {
-    let max = Math.max(...results);
-    let idx = results.indexOf(max);
-    display[idx] = `7(${results[idx]})`;
-    results[idx] = 7;
+    let highs = results
+      .map((v, i) => ({ v, i }))
+      .sort((a, b) => b.v - a.v);
+
+    let target = highs[0];
+    display[target.i] = `7(${results[target.i]})`;
+    results[target.i] = 7;
   }
 
   let successes = 0;
@@ -52,9 +60,36 @@ function rollDice() {
   });
 
   playerRef.child("lastRoll").set({
-    results: results,
+    results,
     displayResults: display,
-    successes: successes,
+    successes,
+    ordem3,
+    vantagem,
+    desvantagem,
     timestamp: Date.now()
   });
 }
+
+// 🔥 PLAYER ESCUTA O PRÓPRIO RESULTADO
+playerRef.child("lastRoll").on("value", snap => {
+  const data = snap.val();
+  if (!data) return;
+
+  diceResultsDiv.innerText = data.displayResults.join(", ");
+  successCountDiv.innerText = data.successes;
+
+  resultsBox.classList.remove("hidden", "fade-out");
+  resultsBox.classList.add("fade-in");
+
+  video.currentTime = 0;
+  video.play();
+
+  setTimeout(() => {
+    resultsBox.classList.add("fade-out");
+  }, 6000);
+
+  setTimeout(() => {
+    resultsBox.classList.add("hidden");
+    resultsBox.classList.remove("fade-in", "fade-out");
+  }, 7000);
+});
