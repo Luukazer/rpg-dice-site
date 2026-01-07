@@ -1,121 +1,46 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>OBS Overlay</title>
-
-<style>
-body{
-  margin:0;
-  background:transparent;
-  overflow:hidden;
-}
-
-#overlay{
-  position:relative;
-  width:240px;
-  height:240px;
-}
-
-#videoContainer{
-  position:absolute;
-  inset:0;
-}
-
-#texto{
-  position:absolute;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  opacity:0;
-  transition:opacity .5s;
-}
-
-#numero{
-  font-size:80px;
-  color:white;
-  text-shadow:0 0 15px white;
-}
-
-#label{
-  font-size:26px;
-  color:white;
-}
-</style>
+<title>Admin Perfis</title>
 </head>
-
 <body>
 
-<div id="overlay">
-  <div id="videoContainer"></div>
+<h2>Criar Perfil</h2>
+<input id="nome" placeholder="Nome do jogador">
+<button onclick="criar()">Criar</button>
 
-  <div id="texto">
-    <div id="numero"></div>
-    <div id="label">Sucessos</div>
-  </div>
-</div>
+<ul id="lista"></ul>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
+<script src="firebase.js"></script>
 <script>
-// 🔒 CORREÇÃO AUTOMÁTICA DE LINK (# → ?perfil=)
-if (!window.location.search && window.location.hash) {
-  const perfil = window.location.hash.replace("#","");
-  window.location.replace(
-    window.location.pathname + "?perfil=" + perfil
-  );
+function criar(){
+  const nome = document.getElementById("nome").value;
+  const id = Math.random().toString(36).substr(2,9);
+
+  db.ref("perfis/"+id).set({ nome });
+
+  listar();
 }
 
-const params = new URLSearchParams(window.location.search);
-const perfil = params.get("perfil") || "default";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBzniGkaFn9HzyeS9XhQ9cAETXWIPFcsQw",
-  authDomain: "sociedade-mitra-dados.firebaseapp.com",
-  databaseURL: "https://sociedade-mitra-dados-default-rtdb.firebaseio.com",
-  projectId: "sociedade-mitra-dados",
-  storageBucket: "sociedade-mitra-dados.firebasestorage.app",
-  messagingSenderId: "155136545326",
-  appId: "1:155136545326:web:b9721595277fb7cef685bf"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-const container = document.getElementById("videoContainer");
-const texto = document.getElementById("texto");
-const numero = document.getElementById("numero");
-
-db.ref("resultados/"+perfil).on("value", snap=>{
-  if(!snap.exists()) return;
-
-  const {sucessos} = snap.val();
-
-  texto.style.opacity = 0;
-  numero.textContent = "";
-  container.innerHTML = "";
-
-  const video = document.createElement("video");
-  video.src = "dice_animation.webm";
-  video.autoplay = true;
-  video.muted = true;
-  video.playsInline = true;
-
-  container.appendChild(video);
-
-  setTimeout(()=>{
-    numero.textContent = sucessos;
-    texto.style.opacity = 1;
-  },1000);
-
-  setTimeout(()=>{
-    texto.style.opacity = 0;
-    container.innerHTML = "";
-  },7000);
-});
+function listar(){
+  db.ref("perfis").once("value", snap=>{
+    const ul = document.getElementById("lista");
+    ul.innerHTML = "";
+    snap.forEach(p=>{
+      const id = p.key;
+      const nome = p.val().nome;
+      ul.innerHTML += `
+        <li>
+          <b>${nome}</b><br>
+          Player: <a href="player.html#${id}" target="_blank">link</a><br>
+          OBS: <a href="obs.html#${id}" target="_blank">link</a>
+        </li><br>
+      `;
+    });
+  });
+}
+listar();
 </script>
 
 </body>
