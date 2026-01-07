@@ -1,20 +1,20 @@
+/* BASE */
 body {
   background: #0f172a;
   color: white;
   font-family: Arial, sans-serif;
-  height: 100vh;
   margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.player-container {
+/* PLAYER */
+.container {
   background: #020617;
   padding: 30px;
   border-radius: 12px;
   text-align: center;
   width: 350px;
+  margin: auto;
+  margin-top: 50px;
 }
 
 input, button {
@@ -23,35 +23,17 @@ input, button {
   width: 100%;
 }
 
-.checkboxes {
-  text-align: left;
-}
-
 #results {
-  position: relative;
   margin-top: 20px;
+  text-shadow: 0 0 10px white;
 }
 
-#diceVideo {
-  width: 100%;
-  display: block;
-}
-
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-shadow: 0 0 15px white;
+#diceResults {
+  margin-bottom: 10px;
 }
 
 #successCount {
-  font-size: 48px;
+  font-size: 42px;
   font-weight: bold;
 }
 
@@ -59,24 +41,37 @@ input, button {
   font-size: 20px;
 }
 
+/* OBS */
+.obs-body {
+  background: transparent;
+  overflow: hidden;
+}
+
+.obs-body video {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+#result {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-shadow: 0 0 15px white;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+#result.show {
+  display: flex;
+  opacity: 1;
+}
+
+/* UTIL */
 .hidden {
   display: none;
-}
-
-.fade-in {
-  animation: fadeIn 1s forwards;
-}
-
-.fade-out {
-  animation: fadeOut 1s forwards;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0 }
-  to { opacity: 1 }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1 }
-  to { opacity: 0 }
 }
