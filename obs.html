@@ -28,6 +28,7 @@ video{
   left:50%;
   transform:translate(-50%,-50%);
   text-align:center;
+  opacity:0;
 }
 
 #numero{
@@ -47,7 +48,7 @@ video{
 <body>
 
 <div id="overlay">
-  <video id="video" src="dice_animation.webm"></video>
+  <video id="video" src="dice_animation.webm" muted playsinline></video>
 
   <div id="texto">
     <div id="numero"></div>
@@ -74,22 +75,33 @@ const db = firebase.database();
 
 const video = document.getElementById("video");
 const numero = document.getElementById("numero");
+const texto = document.getElementById("texto");
 
 db.ref("resultado").on("value", snap=>{
   if(!snap.exists()) return;
 
   const {sucessos} = snap.val();
 
+  // RESET TOTAL
+  texto.style.opacity = 0;
   numero.textContent = "";
+  video.pause();
   video.currentTime = 0;
+
+  // TOCA VÍDEO
   video.play();
 
+  // MOSTRA TEXTO DEPOIS DE 1s
   setTimeout(()=>{
     numero.textContent = sucessos;
+    texto.style.opacity = 1;
   },1000);
 
+  // LIMPA TUDO AO FINAL
   setTimeout(()=>{
-    numero.textContent = "";
+    texto.style.opacity = 0;
+    video.pause();
+    video.currentTime = 0;
   },7000);
 });
 </script>
