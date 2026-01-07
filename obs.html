@@ -5,21 +5,20 @@
   <title>OBS Overlay</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="overlay">
+<body class="obs-body">
 
   <video id="diceVideo" src="dice_animation.webm" muted></video>
 
-  <div class="result" id="result">
-    <div class="success-count" id="successCount"></div>
-    <div class="success-label">Sucessos</div>
+  <div id="result">
+    <div id="successCount"></div>
+    <div class="label">Sucessos</div>
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-  <!-- App -->
-<script src="./firebase.js"></script>
-<script src="./obs.js"></script>
+  <script src="./firebase.js"></script>
+  <script src="./obs.js"></script>
 </body>
 </html>
