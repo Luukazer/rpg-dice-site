@@ -1,47 +1,62 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<title>OBS Overlay</title>
 
 <style>
 body{
   margin:0;
   background:transparent;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  font-family:Arial, sans-serif;
+  overflow:hidden;
+}
+
+#overlay{
+  position:relative;
+  width:220px;
+  height:220px;
+}
+
+video{
+  width:220px;
+  height:220px;
+}
+
+#texto{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
 }
 
 #numero{
   font-size:80px;
   color:white;
-  text-shadow:0 0 12px #ffffff;
-  display:none;
+  text-shadow:0 0 15px white;
 }
 
 #label{
-  font-size:28px;
+  font-size:26px;
+  margin-top:-10px;
   color:white;
-  margin-top:-12px;
-  display:none;
-}
-
-video{
-  width:220px;
-  display:none;
 }
 </style>
 </head>
+
 <body>
 
-<div id="numero"></div>
-<div id="label">Sucessos</div>
-<video id="video" src="dice_animation.webm" muted playsinline></video>
+<div id="overlay">
+  <video id="video" src="dice_animation.webm"></video>
+
+  <div id="texto">
+    <div id="numero"></div>
+    <div id="label">Sucessos</div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
 const firebaseConfig = {
@@ -57,39 +72,24 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-const numero = document.getElementById('numero');
-const label = document.getElementById('label');
-const video = document.getElementById('video');
+const video = document.getElementById("video");
+const numero = document.getElementById("numero");
 
-let hideTimeout;
-
-db.ref("dados").on("value", snap=>{
+db.ref("resultado").on("value", snap=>{
   if(!snap.exists()) return;
 
   const {sucessos} = snap.val();
 
-  // RESET
-  clearTimeout(hideTimeout);
-  numero.style.display = 'none';
-  label.style.display = 'none';
-
-  // VIDEO
-  video.style.display = 'block';
+  numero.textContent = "";
   video.currentTime = 0;
   video.play();
 
-  // MOSTRA RESULTADO
   setTimeout(()=>{
     numero.textContent = sucessos;
-    numero.style.display = 'block';
-    label.style.display = 'block';
   },1000);
 
-  // LIMPA TUDO
-  hideTimeout = setTimeout(()=>{
-    video.style.display = 'none';
-    numero.style.display = 'none';
-    label.style.display = 'none';
+  setTimeout(()=>{
+    numero.textContent = "";
   },7000);
 });
 </script>
