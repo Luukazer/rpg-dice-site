@@ -1,60 +1,82 @@
 body {
-  margin: 0;
   background: #0f172a;
-  color: #e5e7eb;
+  color: white;
   font-family: Arial, sans-serif;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.container {
-  padding: 20px;
+.player-container {
+  background: #020617;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  width: 350px;
 }
 
 input, button {
   padding: 8px;
-  margin: 5px 0;
+  margin: 10px 0;
+  width: 100%;
 }
 
-button {
-  background: #2563eb;
-  border: none;
-  color: white;
-  cursor: pointer;
+.checkboxes {
+  text-align: left;
+}
+
+#results {
+  position: relative;
+  margin-top: 20px;
+}
+
+#diceVideo {
+  width: 100%;
+  display: block;
 }
 
 .overlay {
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-}
-
-video {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 0 15px white;
 }
 
-.result {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-
-.result.show {
-  opacity: 1;
-}
-
-.success-count {
-  font-size: 96px;
+#successCount {
+  font-size: 48px;
   font-weight: bold;
-  color: white;
-  text-shadow: 0 0 20px white;
 }
 
-.success-label {
-  font-size: 36px;
+.label {
+  font-size: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.fade-in {
+  animation: fadeIn 1s forwards;
+}
+
+.fade-out {
+  animation: fadeOut 1s forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1 }
+  to { opacity: 0 }
 }
