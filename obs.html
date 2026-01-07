@@ -76,11 +76,15 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// 🔹 PERFIL VEM DO LINK
+const params = new URLSearchParams(window.location.search);
+const perfil = params.get("perfil") || "default";
+
 const video = document.getElementById("video");
 const texto = document.getElementById("texto");
 const numero = document.getElementById("numero");
 
-db.ref("resultado").on("value", snap=>{
+db.ref("resultados/" + perfil).on("value", snap=>{
   if(!snap.exists()) return;
 
   const {sucessos} = snap.val();
