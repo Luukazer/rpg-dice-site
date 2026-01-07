@@ -1,174 +1,84 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Rolagem d12</title>
-
-<style>
-body{
-  background:#0f1115;
-  color:#e5e7eb;
-  font-family:Arial, Helvetica, sans-serif;
-  text-align:center;
-  padding-top:40px;
-}
-h2{margin-bottom:20px}
-
-input,button{
-  background:#1a1d24;
-  color:#e5e7eb;
-  border:1px solid #2c2f36;
-  padding:10px 14px;
-  border-radius:6px;
-  font-size:16px;
-}
-
-button{
-  cursor:pointer;
-}
-button:hover{
-  background:#222633;
-}
-
-.mods{
-  margin:20px 0;
-}
-.mods label{
-  margin:0 10px;
-}
-
-.warn{
-  color:#ff6b6b;
-  margin-top:10px;
-}
-
-.result{
-  margin-top:20px;
-  color:#cbd5f5;
-}
-</style>
+<title>Player</title>
+<link rel="stylesheet" href="style.css">
 </head>
+<body class="player">
 
-  <div id="playerAnim" style="margin-top:30px;display:none;text-align:center">
-  <div id="playerNum" style="
-    font-size:48px;
-    color:#fff;
-    text-shadow:0 0 6px rgba(0,0,0,.6);
-    display:none;
-    margin-bottom:6px;">
-  </div>
-  <div style="font-size:18px;letter-spacing:2px;display:none" id="playerLabel">
-    SUCESSOS
-  </div>
-  <video id="playerVideo" src="dice.webm" muted playsinline width="260"></video>
-</div>
+<h2>Rolagem</h2>
 
-<body>
-
-<h2>Rolagem d12</h2>
-
-<input type="number" id="qtd" min="1" placeholder="Quantidade">
+<input id="qtd" type="number" min="1" placeholder="Qtd d12">
 
 <div class="mods">
   <label><input type="checkbox" id="ordem3"> Ordem 3</label>
-  <label><input type="checkbox" id="vant"> Vantagem</label>
-  <label><input type="checkbox" id="desv"> Desvantagem</label>
+  <label><input type="checkbox" id="vantagem"> Vantagem</label>
+  <label><input type="checkbox" id="desvantagem"> Desvantagem</label>
 </div>
 
 <button onclick="rolar()">Lançar</button>
 
-<p class="warn" id="msg"></p>
-<div class="result" id="res"></div>
+<p id="erro"></p>
 
 <script>
+const canal = new BroadcastChannel('dados_rpg');
+
 function rolar(){
-  const checks=[ordem3.checked,vant.checked,desv.checked].filter(v=>v).length;
-  if(checks>1){
-    msg.textContent="Escolha apenas um modificador";
+  erro.textContent = '';
+
+  const mods = [ordem3.checked, vantagem.checked, desvantagem.checked]
+    .filter(v=>v).length;
+
+  if(mods > 1){
+    erro.textContent = 'Escolha apenas um modificador';
     return;
   }
-  msg.textContent="";
-  res.innerHTML="";
 
-  const n=Number(qtd.value);
-  if(!n || n<1) return;
+  const n = Number(qtd.value);
+  if(!n || n < 1) return;
 
-  let dados=[];
+  let dados = [];
   for(let i=0;i<n;i++){
-    dados.push({ valor: Math.ceil(Math.random()*12) });
+    dados.push(Math.floor(Math.random()*12)+1);
   }
 
-  // ===== VANTAGEM =====
-  if(vant.checked){
-    const qtd12 = dados.filter(d=>d.valor===12).length;
-    for(let i=0;i<qtd12;i++){
-      const alvo = dados.find(d=>d.valor < 7);
-      if(alvo){
-        alvo.original = alvo.valor;
-        alvo.valor = 8;
-      }
-    }
-  }
-
-  // ===== DESVANTAGEM (prioriza maiores) =====
-  if(desv.checked){
-    const qtd1 = dados.filter(d=>d.valor===1).length;
-    const prioridades = [12,11,10,9,8];
-
-    for(let i=0;i<qtd1;i++){
-      for(const p of prioridades){
-        const alvo = dados.find(d=>d.valor===p);
-        if(alvo){
-          alvo.original = alvo.valor;
-          alvo.valor = 7;
+  // DESVANTAGEM (prioriza maiores)
+  if(desvantagem.checked){
+    dados.sort((a,b)=>b-a);
+    if(dados.includes(1)){
+      for(let i=0;i<dados.length;i++){
+        if(dados[i] >= 8){
+          dados[i] = 7;
           break;
         }
       }
     }
   }
 
-  // ===== SUCESSOS =====
-  let sucessos=0;
+  // VANTAGEM
+  if(vantagem.checked){
+    if(dados.includes(12)){
+      for(let i=0;i<dados.length;i++){
+        if(dados[i] < 7){
+          dados[i] = 8;
+          break;
+        }
+      }
+    }
+  }
+
+  let sucessos = 0;
   dados.forEach(d=>{
-    if(d.valor===12) sucessos+= ordem3.checked ? 3 : 2;
-    else if(d.valor>=8) sucessos+=1;
+    if(d === 12) sucessos += ordem3.checked ? 3 : 2;
+    else if(d >= 8) sucessos += 1;
   });
-  
-// ===== ANIMAÇÃO PARA O JOGADOR =====
-playerAnim.style.display = 'block';
-playerNum.style.display = 'none';
-playerLabel.style.display = 'none';
 
-playerVideo.currentTime = 0;
-playerVideo.play();
-
-setTimeout(()=>{
-  playerNum.textContent = sucessos;
-  playerNum.style.display = 'block';
-  playerLabel.style.display = 'block';
-},1000);
-
-setTimeout(()=>{
-  playerAnim.style.display = 'none';
-},7000);
-
-  // envia para OBS
-  localStorage.setItem(
-    'obsData',
-    JSON.stringify({sucessos,tempo:Date.now()})
-  );
-
-  // exibição para o jogador
-  const textoDados = dados.map(d=>{
-    return d.original
-      ? `${d.valor} (era ${d.original})`
-      : d.valor;
-  }).join(', ');
-
-  res.innerHTML = `
-    <b>Dados:</b> ${textoDados}<br>
-    <b>Sucessos:</b> ${sucessos}
-  `;
+  // ENVIA PARA O OBS
+  canal.postMessage({
+    sucessos,
+    dados
+  });
 }
 </script>
 
