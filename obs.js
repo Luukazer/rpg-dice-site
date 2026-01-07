@@ -1,5 +1,7 @@
 console.log("OBS JS NOVO CARREGADO");
 
+
+function initOBS() {
 const params = new URLSearchParams(window.location.search);
 const playerId = params.get("playerId");
 
@@ -45,3 +47,6 @@ rollRef.on("value", snapshot => {
     video.currentTime = 0;
   }, 7000);
 });
+}
+
+document.addEventListener("DOMContentLoaded", initOBS);
