@@ -1,6 +1,3 @@
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script>
 const firebaseConfig = {
   apiKey: "AIzaSyBzniGkaFn9HzyeS9XhQ9cAETXWIPFcsQw",
   authDomain: "sociedade-mitra-dados.firebaseapp.com",
@@ -13,4 +10,3 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-</script>
