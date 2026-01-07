@@ -2,7 +2,6 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>OBS Dados</title>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -19,7 +18,7 @@ body{
 }
 
 #numero{
-  font-size:72px;
+  font-size:80px;
   color:white;
   text-shadow:0 0 12px #ffffff;
   display:none;
@@ -28,12 +27,12 @@ body{
 #label{
   font-size:28px;
   color:white;
-  margin-top:-10px;
+  margin-top:-12px;
   display:none;
 }
 
 video{
-  width:200px;
+  width:220px;
   display:none;
 }
 </style>
@@ -42,7 +41,7 @@ video{
 
 <div id="numero"></div>
 <div id="label">Sucessos</div>
-<video id="video" src="dice_animation.webm"></video>
+<video id="video" src="dice_animation.webm" muted playsinline></video>
 
 <script>
 const firebaseConfig = {
@@ -62,26 +61,35 @@ const numero = document.getElementById('numero');
 const label = document.getElementById('label');
 const video = document.getElementById('video');
 
+let hideTimeout;
+
 db.ref("dados").on("value", snap=>{
   if(!snap.exists()) return;
 
   const {sucessos} = snap.val();
 
+  // RESET
+  clearTimeout(hideTimeout);
   numero.style.display = 'none';
   label.style.display = 'none';
 
+  // VIDEO
   video.style.display = 'block';
   video.currentTime = 0;
   video.play();
 
+  // MOSTRA RESULTADO
   setTimeout(()=>{
     numero.textContent = sucessos;
     numero.style.display = 'block';
     label.style.display = 'block';
   },1000);
 
-  setTimeout(()=>{
+  // LIMPA TUDO
+  hideTimeout = setTimeout(()=>{
     video.style.display = 'none';
+    numero.style.display = 'none';
+    label.style.display = 'none';
   },7000);
 });
 </script>
