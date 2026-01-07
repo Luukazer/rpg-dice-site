@@ -94,6 +94,7 @@ input, button {
 #diceVideo.show {
   opacity: 1;
 }
+}
 /* UTIL */
 .hidden {
   display: none;
