@@ -96,13 +96,13 @@ input, button {
 }
 
 .success-count {
-  font-size: 104px;
+  font-size: 204px;
   font-weight: bold;
   color: white;
 }
 
 .success-label {
-  font-size: 80px;
+  font-size: 30px;
   color: white;
 }
 /* UTIL */
