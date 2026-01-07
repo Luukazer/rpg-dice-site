@@ -1,17 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
+  <meta charset="UTF-8">
+  <title>OBS Overlay</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="overlay">
-  <video id="vid" src="dice_animation.webm"></video>
+
+  <video id="diceVideo" src="dice_animation.webm" muted></video>
 
   <div class="result" id="result">
-    <div class="success-count" id="count"></div>
+    <div class="success-count" id="successCount"></div>
     <div class="success-label">Sucessos</div>
   </div>
 
-<script src="firebase.js"></script>
-<script src="obs.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <!-- App -->
+  <script src="firebase.js"></script>
+  <script src="obs.js"></script>
 </body>
 </html>
