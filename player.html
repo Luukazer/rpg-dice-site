@@ -2,13 +2,13 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Rolagem de Dados</title>
+<title>Player</title>
 
 <style>
 body{
   margin:0;
-  background:#0f141c;
-  color:#fff;
+  background:#0f1117;
+  color:#eaeaea;
   font-family:Arial, sans-serif;
   display:flex;
   justify-content:center;
@@ -16,49 +16,32 @@ body{
   height:100vh;
 }
 
-#painel{
-  background:#151c28;
+#box{
+  background:#151822;
   padding:20px;
   border-radius:10px;
   width:320px;
   text-align:center;
-  box-shadow:0 0 20px rgba(0,0,0,.6);
 }
 
 input, button{
   width:100%;
   padding:10px;
-  margin-top:8px;
-  border:none;
-  border-radius:6px;
+  margin-top:10px;
   font-size:16px;
 }
 
 button{
-  background:#2d6cdf;
-  color:white;
   cursor:pointer;
 }
 
 label{
   display:block;
-  margin-top:6px;
-  font-size:14px;
+  margin-top:8px;
 }
 
-#sucessosPlayer{
-  margin-top:10px;
-  font-size:20px;
-  font-weight:bold;
-  opacity:0;
-  transition:opacity .5s;
-}
-
-#dadosIndividuais{
-  margin-top:10px;
-  font-size:14px;
-  color:#ccc;
-  word-wrap:break-word;
+#result{
+  margin-top:15px;
   opacity:0;
   transition:opacity .5s;
 }
@@ -67,10 +50,10 @@ label{
 
 <body>
 
-<div id="painel">
-  <h3>Rolagem de Dados</h3>
+<div id="box">
+  <h2>Rolar Dados</h2>
 
-  <input type="number" id="qtd" placeholder="Quantidade de d12">
+  <input id="qtd" type="number" min="1" placeholder="Quantidade de d12">
 
   <label><input type="checkbox" id="ordem3"> Ordem 3</label>
   <label><input type="checkbox" id="vantagem"> Vantagem</label>
@@ -78,14 +61,24 @@ label{
 
   <button onclick="rolar()">Lançar</button>
 
-  <div id="sucessosPlayer"></div>
-  <div id="dadosIndividuais"></div>
+  <div id="result"></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
+// 🔒 CORREÇÃO AUTOMÁTICA DE LINK (# → ?perfil=)
+if (!window.location.search && window.location.hash) {
+  const perfil = window.location.hash.replace("#","");
+  window.location.replace(
+    window.location.pathname + "?perfil=" + perfil
+  );
+}
+
+const params = new URLSearchParams(window.location.search);
+const perfil = params.get("perfil") || "default";
+
 const firebaseConfig = {
   apiKey: "AIzaSyBzniGkaFn9HzyeS9XhQ9cAETXWIPFcsQw",
   authDomain: "sociedade-mitra-dados.firebaseapp.com",
@@ -99,80 +92,76 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// 🔹 PERFIL VEM DO LINK
-const params = new URLSearchParams(window.location.search);
-const perfil = params.get("perfil") || "default";
-
 function rolar(){
-  const qtd = parseInt(document.getElementById("qtd").value);
-  const ordem3 = document.getElementById("ordem3").checked;
-  const vantagem = document.getElementById("vantagem").checked;
-  const desvantagem = document.getElementById("desvantagem").checked;
+  const qtd = Number(document.getElementById("qtd").value);
+  if(qtd <= 0) return;
 
-  if(!qtd || qtd < 1){
-    alert("Digite um valor válido.");
-    return;
-  }
+  const checks = ["ordem3","vantagem","desvantagem"]
+    .filter(id=>document.getElementById(id).checked);
 
-  if([ordem3, vantagem, desvantagem].filter(v=>v).length > 1){
-    alert("Marque apenas um modificador.");
+  if(checks.length > 1){
+    alert("Escolha apenas um modificador.");
     return;
   }
 
   let dados = [];
-  let exibicao = [];
-
-  for(let i=0;i<qtd;i++){
-    let v = Math.floor(Math.random()*12)+1;
-    dados.push(v);
-    exibicao.push(v.toString());
-  }
-
-  if(desvantagem && dados.includes(1)){
-    let alvo = dados
-      .map((v,i)=>({v,i}))
-      .filter(o=>o.v>=8)
-      .sort((a,b)=>b.v-a.v)[0];
-
-    if(alvo){
-      exibicao[alvo.i] = `7(${dados[alvo.i]})`;
-      dados[alvo.i] = 7;
-    }
-  }
-
-  if(vantagem && dados.includes(12)){
-    let idx = dados.findIndex(v=>v<7);
-    if(idx !== -1){
-      exibicao[idx] = `8(${dados[idx]})`;
-      dados[idx] = 8;
-    }
-  }
+  for(let i=0;i<qtd;i++) dados.push(Math.ceil(Math.random()*12));
 
   let sucessos = 0;
-  dados.forEach(v=>{
-    if(v>=8 && v<=11) sucessos++;
-    if(v===12) sucessos += ordem3 ? 3 : 2;
-  });
+  let textoDados = [...dados];
 
-  const sEl = document.getElementById("sucessosPlayer");
-  const dEl = document.getElementById("dadosIndividuais");
+  // Ordem 3
+  if(ordem3.checked){
+    dados.forEach(v=>{
+      if(v >= 8 && v <= 11) sucessos++;
+      if(v === 12) sucessos += 3;
+    });
+  }
 
-  sEl.textContent = "Sucessos: " + sucessos;
-  dEl.textContent = "Dados: " + exibicao.join(", ");
+  // Vantagem
+  else if(vantagem.checked){
+    let baixos = dados.filter(v=>v<7).sort((a,b)=>a-b);
+    dados.forEach(v=>{
+      if(v === 12 && baixos.length){
+        const trocado = baixos.shift();
+        textoDados[textoDados.indexOf(trocado)] = `8 (${trocado})`;
+        sucessos += 3;
+      }else if(v >= 8 && v <= 11) sucessos++;
+      else if(v === 12) sucessos += 2;
+    });
+  }
 
-  sEl.style.opacity = 1;
-  dEl.style.opacity = 1;
+  // Desvantagem
+  else if(desvantagem.checked){
+    let altos = dados.filter(v=>v>=8).sort((a,b)=>b-a);
+    dados.forEach(v=>{
+      if(v === 1 && altos.length){
+        const trocado = altos.shift();
+        textoDados[textoDados.indexOf(trocado)] = `7 (${trocado})`;
+      }else if(v >= 8 && v <= 11) sucessos++;
+      else if(v === 12) sucessos += 2;
+    });
+  }
 
+  // Normal
+  else{
+    dados.forEach(v=>{
+      if(v >= 8 && v <= 11) sucessos++;
+      if(v === 12) sucessos += 2;
+    });
+  }
+
+  document.getElementById("result").innerHTML =
+    `<b>Sucessos:</b> ${sucessos}<br><small>${textoDados.join(", ")}</small>`;
+
+  document.getElementById("result").style.opacity = 1;
+
+  db.ref("resultados/"+perfil).set({sucessos});
+
+  // some após 7s
   setTimeout(()=>{
-    sEl.style.opacity = 0;
-    dEl.style.opacity = 0;
+    document.getElementById("result").style.opacity = 0;
   },7000);
-
-  // 🔹 SALVA NO PERFIL CERTO
-  db.ref("resultados/" + perfil).set({
-    sucessos,
-    time: Date.now()
-  });
 }
 </script>
 
