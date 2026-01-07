@@ -55,21 +55,20 @@ input, button {
   height: 1080px;
 }
 
-/* Vídeo central */
+/* Vídeo */
 #diceVideo {
   position: absolute;
   width: 400px;
   height: 400px;
   top: 340px;
   left: 760px;
-
   object-fit: contain;
   opacity: 0;
   transition: opacity 0.5s ease;
 }
 
 /* Texto sobre o vídeo */
-#result {
+.result {
   position: absolute;
   top: 340px;
   left: 760px;
@@ -83,10 +82,11 @@ input, button {
 
   text-shadow: 0 0 15px white;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.5s ease;
 }
 
-#result.show {
+.result.show {
   opacity: 1;
 }
 
