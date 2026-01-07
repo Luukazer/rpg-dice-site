@@ -7,11 +7,13 @@
 </head>
 <body class="obs-body">
 
-  <video id="diceVideo" src="dice_animation.webm" muted></video>
+  <div class="obs-stage">
+    <video id="diceVideo" src="dice_animation.webm" muted></video>
 
-  <div id="result">
-    <div id="successCount"></div>
-    <div class="label">Sucessos</div>
+    <div class="result" id="result">
+      <div class="success-count" id="successCount"></div>
+      <div class="success-label">Sucessos</div>
+    </div>
   </div>
 
   <!-- Firebase -->
