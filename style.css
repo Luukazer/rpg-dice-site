@@ -33,7 +33,7 @@ input, button {
 }
 
 #successCount {
-  font-size: 42px;
+  font-size: 82px;
   font-weight: bold;
 }
 
@@ -99,7 +99,7 @@ input, button {
 }
 
 .success-count {
-  font-size: 204px;
+  font-size: 82px;
   font-weight: bold;
   color: white;
 }
