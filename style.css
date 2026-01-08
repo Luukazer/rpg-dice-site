@@ -95,8 +95,8 @@ input, button {
     0 0 24px rgba(255,255,255,0.8);
 }
 
-.obs-body .success-count {
-  font-size: 420px;
+.obs-body #successCount {
+  font-size: 220px;
   font-weight: bold;
   color: white;
 }
