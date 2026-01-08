@@ -96,7 +96,7 @@ input, button {
 }
 
 .obs-body #successCount {
-  font-size: 220px;
+  font-size: 360px; !important;
   font-weight: bold;
   color: white;
 }
