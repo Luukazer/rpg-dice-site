@@ -1,0 +1,111 @@
+/* BASE */
+body {
+  background: #0f172a;
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+/* PLAYER */
+.container {
+  background: #020617;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  width: 350px;
+  margin: auto;
+  margin-top: 50px;
+}
+
+input, button {
+  padding: 8px;
+  margin: 10px 0;
+  width: 100%;
+}
+
+#results {
+  margin-top: 20px;
+  text-shadow: 0 0 10px white;
+}
+
+#diceResults {
+  margin-bottom: 10px;
+}
+
+#successCount {
+  font-size: 42px;
+  font-weight: bold;
+}
+
+.label {
+  font-size: 20px;
+}
+/* OBS */
+.obs-body {
+  background: transparent;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Canvas fixo OBS */
+.obs-stage {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+}
+
+/* Container único (vídeo + texto) */
+.dice-wrapper {
+  position: absolute;
+  top: 340px;
+  left: 760px;
+  width: 400px;
+  height: 400px;
+
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+/* quando ativo */
+.dice-wrapper.show {
+  opacity: 1;
+}
+
+/* Vídeo */
+#diceVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Texto por cima */
+.result {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  pointer-events: none;
+  text-shadow:
+    0 0 8px white,
+    0 0 16px white,
+    0 0 24px rgba(255,255,255,0.8);
+}
+
+.obs-body #successCount {
+  font-size: 140px; !important;
+  font-weight: bold;
+  color: white;
+}
+
+.success-label {
+  font-size: 20px;
+  color: white;
+}
+/* UTIL */
+.hidden {
+  display: none;
+}
