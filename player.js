@@ -14,10 +14,13 @@ const diceResultsDiv = document.getElementById("diceResults");
 const successCountDiv = document.getElementById("successCount");
 const video = document.getElementById("diceVideo");
 
-// 🔒 CONTROLE DE TIMERS (FIX DO BUG)
+// 🔒 CONTROLE DE TIMERS (FIX DO BUG DE SUMIR DO NADA)
 let fadeTimeout = null;
 let hideTimeout = null;
 
+/* =========================
+   ROLAGEM DE DADOS
+========================= */
 function rollDice() {
   const qtd = parseInt(document.getElementById("diceCount").value);
   const ordem3 = document.getElementById("ordem3").checked;
@@ -95,12 +98,14 @@ function rollDice() {
   });
 }
 
-// 🔥 PLAYER ESCUTA O PRÓPRIO RESULTADO
+/* =========================
+   ESCUTA RESULTADO (10s)
+========================= */
 playerRef.child("lastRoll").on("value", snap => {
   const data = snap.val();
   if (!data) return;
 
-  // 🛑 CANCELA TIMERS ANTIGOS (ESSA É A CORREÇÃO)
+  // 🛑 cancela timers antigos
   if (fadeTimeout) clearTimeout(fadeTimeout);
   if (hideTimeout) clearTimeout(hideTimeout);
 
@@ -110,7 +115,6 @@ playerRef.child("lastRoll").on("value", snap => {
   resultsBox.classList.remove("hidden", "fade-out");
   resultsBox.classList.add("fade-in");
 
-  // SE EXISTIR VÍDEO, TOCA
   if (video) {
     video.currentTime = 0;
     video.play();
@@ -129,3 +133,58 @@ playerRef.child("lastRoll").on("value", snap => {
     successCountDiv.innerText = "";
   }, 10000);
 });
+
+/* =========================
+   ÍNDICE DE DANO & PRESSÃO
+========================= */
+
+const damageCurrent = document.getElementById("damageCurrent");
+const damageTotal = document.getElementById("damageTotal");
+const pressureCurrent = document.getElementById("pressureCurrent");
+const pressureTotal = document.getElementById("pressureTotal");
+
+// CARREGA VALORES DO FIREBASE
+playerRef.child("stats").on("value", snap => {
+  const data = snap.val();
+  if (!data) return;
+
+  damageCurrent.value = data.damageCurrent ?? 0;
+  damageTotal.value = data.damageTotal ?? 0;
+  pressureCurrent.value = data.pressureCurrent ?? 0;
+  pressureTotal.value = data.pressureTotal ?? 0;
+});
+
+// BOTÕES + / -
+function changeStat(type, delta) {
+  let currentEl, totalEl;
+
+  if (type === "damage") {
+    currentEl = damageCurrent;
+    totalEl = damageTotal;
+  } else {
+    currentEl = pressureCurrent;
+    totalEl = pressureTotal;
+  }
+
+  let current = parseInt(currentEl.value) || 0;
+  let total = parseInt(totalEl.value) || 0;
+
+  current = Math.max(0, Math.min(current + delta, total));
+  currentEl.value = current;
+
+  saveStats();
+}
+
+// SALVA AO DIGITAR
+[damageCurrent, damageTotal, pressureCurrent, pressureTotal].forEach(input => {
+  input.addEventListener("change", saveStats);
+});
+
+function saveStats() {
+  playerRef.child("stats").set({
+    damageCurrent: parseInt(damageCurrent.value) || 0,
+    damageTotal: parseInt(damageTotal.value) || 0,
+    pressureCurrent: parseInt(pressureCurrent.value) || 0,
+    pressureTotal: parseInt(pressureTotal.value) || 0
+  });
+}
