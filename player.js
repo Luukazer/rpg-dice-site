@@ -20,45 +20,66 @@ function rollDice() {
   const vantagem = document.getElementById("vantagem").checked;
   const desvantagem = document.getElementById("desvantagem").checked;
 
+  if (vantagem && desvantagem) {
+    alert("Vantagem e Desvantagem não podem ser usadas juntas.");
+    return;
+  }
+
   let results = [];
   let display = [];
 
+  // ROLAGEM BASE
   for (let i = 0; i < qtd; i++) {
     const r = Math.ceil(Math.random() * 12);
     results.push(r);
-    display.push(String(r));
+
+    let cls = "";
+    if (r === 1) cls = "die-one";
+    if (r === 12) cls = "die-twelve";
+
+    display.push(`<span class="${cls}">${r}</span>`);
   }
 
-  // VANTAGEM
-  if (vantagem && results.includes(12)) {
-    let lows = results
-      .map((v, i) => ({ v, i }))
-      .filter(o => o.v < 8);
+  // =====================
+  // VANTAGEM (APLICA SEMPRE)
+  // =====================
+  if (vantagem) {
+    const qtd12 = results.filter(r => r === 12).length;
 
-    if (lows.length) {
-      let target = lows.sort((a, b) => a.v - b.v)[0];
-      display[target.i] = `8(${results[target.i]})`;
-      results[target.i] = 8;
+    for (let i = 0; i < qtd12; i++) {
+      const idx = results.findIndex(r => r < 8);
+      if (idx === -1) break;
+
+      display[idx] = `<span>8(${results[idx]})</span>`;
+      results[idx] = 8;
     }
   }
 
-  // DESVANTAGEM
-  if (desvantagem && results.includes(1)) {
-    let highs = results
-      .map((v, i) => ({ v, i }))
-      .sort((a, b) => b.v - a.v);
+  // =====================
+  // DESVANTAGEM (APLICA SEMPRE)
+  // =====================
+  if (desvantagem) {
+    const qtd1 = results.filter(r => r === 1).length;
 
-    let target = highs[0];
-    display[target.i] = `7(${results[target.i]})`;
-    results[target.i] = 7;
+    for (let i = 0; i < qtd1; i++) {
+      const max = Math.max(...results);
+      const idx = results.indexOf(max);
+
+      display[idx] = `<span>7(${results[idx]})</span>`;
+      results[idx] = 7;
+    }
   }
 
+  // =====================
+  // CONTAGEM DE SUCESSOS
+  // =====================
   let successes = 0;
   results.forEach(r => {
     if (r >= 8) successes++;
     if (r === 12) successes += ordem3 ? 2 : 1;
   });
 
+  // ENVIA PARA FIREBASE
   playerRef.child("lastRoll").set({
     results,
     displayResults: display,
@@ -75,21 +96,27 @@ playerRef.child("lastRoll").on("value", snap => {
   const data = snap.val();
   if (!data) return;
 
-  diceResultsDiv.innerText = data.displayResults.join(", ");
+  diceResultsDiv.innerHTML = data.displayResults.join(" ");
   successCountDiv.innerText = data.successes;
 
   resultsBox.classList.remove("hidden", "fade-out");
   resultsBox.classList.add("fade-in");
 
-  video.currentTime = 0;
-  video.play();
+  // SE EXISTIR VÍDEO, TOCA
+  if (video) {
+    video.currentTime = 0;
+    video.play();
+  }
 
+  // 🔥 APAGA RESULTADO APÓS 10s
   setTimeout(() => {
     resultsBox.classList.add("fade-out");
-  }, 6000);
+  }, 9000);
 
   setTimeout(() => {
     resultsBox.classList.add("hidden");
     resultsBox.classList.remove("fade-in", "fade-out");
-  }, 7000);
+    diceResultsDiv.innerHTML = "";
+    successCountDiv.innerText = "";
+  }, 10000);
 });
