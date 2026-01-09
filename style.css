@@ -109,3 +109,123 @@ input, button {
 .hidden {
   display: none;
 }
+
+/* =========================
+   PLAYER – DADOS ESPECIAIS
+========================= */
+
+/* Dado 1 – vermelho */
+.die-one {
+  color: #ff2b2b;
+  font-weight: bold;
+  text-shadow:
+    0 0 6px #ff2b2b,
+    0 0 12px rgba(255,43,43,0.8);
+}
+
+/* Dado 12 – verde */
+.die-twelve {
+  color: #2bff6a;
+  font-weight: bold;
+  text-shadow:
+    0 0 6px #2bff6a,
+    0 0 12px rgba(43,255,106,0.8);
+}
+
+/* =========================
+   PLAYER – CONTROLE + / -
+========================= */
+
+.dice-control {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.dice-control button {
+  width: 42px;
+  height: 42px;
+  font-size: 22px;
+  font-weight: bold;
+  background: #020617;
+  border: 1px solid #334155;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.dice-control button:hover {
+  background: #1e293b;
+}
+
+/* =========================
+   PLAYER – STATUS
+========================= */
+
+.status {
+  margin-top: 25px;
+}
+
+.status-box {
+  margin-bottom: 15px;
+}
+
+.status-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.status-controls input {
+  width: 60px;
+  text-align: center;
+}
+
+/* Dano – neon vermelho */
+.status-box.damage {
+  color: white;
+  text-shadow:
+    0 0 6px red,
+    0 0 14px rgba(255,0,0,0.8);
+}
+
+/* Pressão – neon amarelo */
+.status-box.pressure {
+  color: white;
+  text-shadow:
+    0 0 6px yellow,
+    0 0 14px rgba(255,255,0,0.8);
+}
+
+/* =========================
+   OBS – STATUS FIXO NA TELA
+========================= */
+
+.obs-stats {
+  position: absolute;
+  top: 500px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 220px;
+  pointer-events: none;
+}
+
+.obs-damage {
+  font-size: 48px;
+  font-weight: bold;
+  color: white;
+  text-shadow:
+    0 0 8px red,
+    0 0 16px rgba(255,0,0,0.8);
+}
+
+.obs-pressure {
+  font-size: 48px;
+  font-weight: bold;
+  color: white;
+  text-shadow:
+    0 0 8px yellow,
+    0 0 16px rgba(255,255,0,0.8);
+}
