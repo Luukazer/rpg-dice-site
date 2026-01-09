@@ -17,54 +17,46 @@ const presCurEl = document.getElementById("obsPressureCurrent");
 let lastDamage = null;
 let lastPressure = null;
 
-playerRef.on("value", snap => {
+playerRef.child("stats").on("value", snap => {
   const data = snap.val();
   if (!data) return;
 
   /* ========= DANO ========= */
-  if (data.damage) {
-    const cur = data.damage.current ?? 0;
-    const tot = data.damage.total ?? 1;
+  const dCur = data.damageCurrent ?? 0;
+  const dTot = data.damageTotal ?? 1;
 
-    dmgCurEl.textContent = cur;
-    dmgTotEl.textContent = tot;
+  dmgCurEl.textContent = dCur;
+  dmgTotEl.textContent = dTot;
 
-    // tremida sempre que mudar
-    if (lastDamage !== null && cur !== lastDamage) {
-      triggerShake(dmgEl);
-    }
-
-    // alerta 80%
-    toggleWarning(dmgEl, cur / tot >= 0.8);
-
-    lastDamage = cur;
+  if (lastDamage !== null && dCur !== lastDamage) {
+    triggerImpact(dmgEl);
   }
+
+  toggleWarning(dmgEl, dTot > 0 && dCur / dTot >= 0.8);
+  lastDamage = dCur;
 
   /* ========= PRESSÃO ========= */
-  if (data.pressure) {
-    const cur = data.pressure.current ?? 0;
-    const tot = data.pressure.total ?? 1;
+  const pCur = data.pressureCurrent ?? 0;
+  const pTot = data.pressureTotal ?? 1;
 
-    presCurEl.textContent = cur;
+  presCurEl.textContent = pCur;
 
-    if (lastPressure !== null && cur !== lastPressure) {
-      triggerShake(presEl);
-    }
-
-    toggleWarning(presEl, cur / tot >= 0.8);
-
-    lastPressure = cur;
+  if (lastPressure !== null && pCur !== lastPressure) {
+    triggerImpact(presEl);
   }
+
+  toggleWarning(presEl, pTot > 0 && pCur / pTot >= 0.8);
+  lastPressure = pCur;
 });
 
 /* =========================
    HELPERS
 ========================= */
 
-function triggerShake(el) {
-  el.classList.remove("shake");
+function triggerImpact(el) {
+  el.classList.remove("impact");
   void el.offsetWidth; // força reflow
-  el.classList.add("shake");
+  el.classList.add("impact");
 }
 
 function toggleWarning(el, active) {
