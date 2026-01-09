@@ -40,77 +40,15 @@ input, button {
 .label {
   font-size: 20px;
 }
-/* OBS */
-.obs-body {
-  background: transparent;
-  margin: 0;
-  overflow: hidden;
-}
 
-/* Canvas fixo OBS */
-.obs-stage {
-  position: relative;
-  width: 1920px;
-  height: 1080px;
-}
-
-/* Container único (vídeo + texto) */
-.dice-wrapper {
-  position: absolute;
-  top: 340px;
-  left: 760px;
-  width: 400px;
-  height: 400px;
-
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-
-/* quando ativo */
-.dice-wrapper.show {
-  opacity: 1;
-}
-
-/* Vídeo */
-#diceVideo {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* Texto por cima */
-.result {
-  position: absolute;
-  inset: 0;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  pointer-events: none;
-  text-shadow:
-    0 0 8px white,
-    0 0 16px white,
-    0 0 24px rgba(255,255,255,0.8);
-}
-
-.obs-body #successCount {
-  font-size: 140px; !important;
-  font-weight: bold;
-  color: white;
-}
-
-.success-label {
-  font-size: 20px;
-  color: white;
-}
 /* UTIL */
 .hidden {
   display: none;
 }
 
-/* Destaque de dados especiais */
+/* ========================= */
+/* DADOS ESPECIAIS */
+/* ========================= */
 .die-one {
   color: #ff2b2b;
   font-weight: bold;
@@ -125,4 +63,79 @@ input, button {
   text-shadow:
     0 0 6px #2bff6a,
     0 0 12px rgba(43,255,106,0.8);
+}
+
+/* ========================= */
+/* ÍNDICE DE DANO / PRESSÃO */
+/* ========================= */
+.stat-box {
+  margin-top: 25px;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.stat-title {
+  font-size: 18px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* linha horizontal */
+.stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.stat-row input {
+  width: 60px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.stat-row span {
+  font-size: 18px;
+}
+
+/* botões */
+.stat-row button {
+  width: 40px;
+  height: 40px;
+  font-size: 22px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+}
+
+/* DANO */
+.stat-box.damage {
+  border: 1px solid #ff2b2b;
+  box-shadow: 0 0 10px rgba(255,43,43,0.6);
+}
+
+.stat-box.damage .stat-title {
+  color: #ff2b2b;
+  text-shadow: 0 0 8px #ff2b2b;
+}
+
+.stat-box.damage button {
+  background: #ff2b2b;
+}
+
+/* PRESSÃO */
+.stat-box.pressure {
+  border: 1px solid #ffd42b;
+  box-shadow: 0 0 10px rgba(255,212,43,0.6);
+}
+
+.stat-box.pressure .stat-title {
+  color: #ffd42b;
+  text-shadow: 0 0 8px #ffd42b;
+}
+
+.stat-box.pressure button {
+  background: #ffd42b;
+  color: #020617;
 }
