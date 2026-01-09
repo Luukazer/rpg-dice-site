@@ -10,11 +10,23 @@ db.ref("players").on("value", snapshot => {
     const li = document.createElement("li");
     li.innerHTML = `
       <strong>${name}</strong><br>
-      <a href="player.html?playerId=${id}" target="_blank">Player</a> |
-      <a href="obs.html?playerId=${id}" target="_blank">OBS</a>
+
+      <a href="player.html?playerId=${id}" target="_blank">
+        Player
+      </a>
+      |
+      <a href="obs.html?playerId=${id}" target="_blank">
+        OBS
+      </a>
+      |
+      <a href="obs_integridade.html?playerId=${id}" target="_blank">
+        OBS Integridade
+      </a>
+
       <br>
       <button onclick="deletePlayer('${id}')">Excluir</button>
     `;
+
     list.appendChild(li);
   });
 });
