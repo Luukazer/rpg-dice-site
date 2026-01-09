@@ -191,3 +191,61 @@ input, button {
 .obs-stat .slash {
   margin: 0 6px;
 }
+
+/* =========================
+   ALERTA 80% (PISCAR SUAVE)
+========================= */
+
+.warning {
+  animation: pulseGlow 1.6s ease-in-out infinite;
+}
+
+/* Vermelho – Dano */
+.obs-stat.damage.warning {
+  animation-name: pulseGlowRed;
+}
+
+/* Amarelo – Pressão */
+.obs-stat.pressure.warning {
+  animation-name: pulseGlowYellow;
+}
+
+/* =========================
+   ANIMAÇÕES
+========================= */
+
+@keyframes pulseGlowRed {
+  0% {
+    text-shadow:
+      0 0 8px rgba(255, 40, 40, 0.6),
+      0 0 14px rgba(255, 40, 40, 0.4);
+  }
+  50% {
+    text-shadow:
+      0 0 14px rgba(255, 40, 40, 0.9),
+      0 0 24px rgba(255, 40, 40, 0.7);
+  }
+  100% {
+    text-shadow:
+      0 0 8px rgba(255, 40, 40, 0.6),
+      0 0 14px rgba(255, 40, 40, 0.4);
+  }
+}
+
+@keyframes pulseGlowYellow {
+  0% {
+    text-shadow:
+      0 0 8px rgba(255, 220, 40, 0.6),
+      0 0 14px rgba(255, 220, 40, 0.4);
+  }
+  50% {
+    text-shadow:
+      0 0 14px rgba(255, 220, 40, 0.9),
+      0 0 24px rgba(255, 220, 40, 0.7);
+  }
+  100% {
+    text-shadow:
+      0 0 8px rgba(255, 220, 40, 0.6),
+      0 0 14px rgba(255, 220, 40, 0.4);
+  }
+}
