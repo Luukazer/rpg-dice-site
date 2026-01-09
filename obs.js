@@ -1,52 +1,39 @@
-console.log("OBS JS NOVO CARREGADO");
+document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const playerId = params.get("playerId");
+  if (!playerId) return;
 
+  const ref = db.ref("players/" + playerId);
 
-function initOBS() {
-const params = new URLSearchParams(window.location.search);
-const playerId = params.get("playerId");
-
-if (!playerId) throw new Error("OBS sem playerId");
-
-const rollRef = db.ref("players/" + playerId + "/lastRoll");
-
-const wrapper = document.getElementById("diceWrapper");
-const video = document.getElementById("diceVideo");
-const count = document.getElementById("successCount");
-
-if (!wrapper || !video || !count) {
-  console.error("Elemento do OBS não encontrado", {
-    wrapper,
-    video,
-    count
+  // STATUS
+  ref.child("damage").on("value", s => {
+    if (!s.exists()) return;
+    obsDamage.textContent = `${s.val().current}/${s.val().total}`;
   });
-  return;
-}
 
-let lastTimestamp = 0;
+  ref.child("pressure").on("value", s => {
+    if (!s.exists()) return;
+    obsPressure.textContent = s.val().current;
+  });
 
-rollRef.on("value", snapshot => {
-  if (!snapshot.exists()) return;
+  // DADOS (igual antes)
+  const rollRef = ref.child("lastRoll");
+  let last = 0;
 
-  const data = snapshot.val();
-  if (!data.timestamp || data.timestamp <= lastTimestamp) return;
-  lastTimestamp = data.timestamp;
+  rollRef.on("value", snap => {
+    if (!snap.exists()) return;
+    const d = snap.val();
+    if (d.timestamp <= last) return;
+    last = d.timestamp;
 
-  wrapper.classList.remove("show");
-  video.pause();
-  video.currentTime = 0;
+    successCount.textContent = d.successes;
+    diceWrapper.classList.add("show");
+    diceVideo.currentTime = 0;
+    diceVideo.play();
 
-  void wrapper.offsetWidth;
-
-  count.textContent = data.successes;
-  wrapper.classList.add("show");
-  video.play();
-
-  setTimeout(() => {
-    wrapper.classList.remove("show");
-    video.pause();
-    video.currentTime = 0;
-  }, 7000);
+    setTimeout(() => {
+      diceWrapper.classList.remove("show");
+      diceVideo.pause();
+    }, 7000);
+  });
 });
-}
-
-document.addEventListener("DOMContentLoaded", initOBS);
