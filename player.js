@@ -180,11 +180,32 @@ function changeStat(type, delta) {
   input.addEventListener("change", saveStats);
 });
 
+/* =========================
+   SALVAMENTO (PLAYER + OBS)
+========================= */
 function saveStats() {
+  const dmgCur = parseInt(damageCurrent.value) || 0;
+  const dmgTot = parseInt(damageTotal.value) || 0;
+  const presCur = parseInt(pressureCurrent.value) || 0;
+  const presTot = parseInt(pressureTotal.value) || 0;
+
+  // mantém compatibilidade com a ficha do player
   playerRef.child("stats").set({
-    damageCurrent: parseInt(damageCurrent.value) || 0,
-    damageTotal: parseInt(damageTotal.value) || 0,
-    pressureCurrent: parseInt(pressureCurrent.value) || 0,
-    pressureTotal: parseInt(pressureTotal.value) || 0
+    damageCurrent: dmgCur,
+    damageTotal: dmgTot,
+    pressureCurrent: presCur,
+    pressureTotal: presTot
+  });
+
+  // 🔥 ESPELHA PARA O OBS INTEGRIDADE
+  playerRef.update({
+    damage: {
+      current: dmgCur,
+      total: dmgTot
+    },
+    pressure: {
+      current: presCur,
+      total: presTot
+    }
   });
 }
