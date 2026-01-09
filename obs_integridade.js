@@ -6,21 +6,67 @@ if (!playerId) throw new Error("OBS Integridade sem playerId");
 const playerRef = db.ref("players/" + playerId);
 
 // ELEMENTOS
-const dmgCur = document.getElementById("obsDamageCurrent");
-const dmgTot = document.getElementById("obsDamageTotal");
-const presCur = document.getElementById("obsPressureCurrent");
+const dmgEl = document.querySelector(".obs-stat.damage");
+const presEl = document.querySelector(".obs-stat.pressure");
 
-// ESCUTA DADOS DO PLAYER
+const dmgCurEl = document.getElementById("obsDamageCurrent");
+const dmgTotEl = document.getElementById("obsDamageTotal");
+const presCurEl = document.getElementById("obsPressureCurrent");
+
+// ESTADO ANTERIOR
+let lastDamage = null;
+let lastPressure = null;
+
 playerRef.on("value", snap => {
   const data = snap.val();
   if (!data) return;
 
+  /* ========= DANO ========= */
   if (data.damage) {
-    dmgCur.textContent = data.damage.current ?? 0;
-    dmgTot.textContent = data.damage.total ?? 0;
+    const cur = data.damage.current ?? 0;
+    const tot = data.damage.total ?? 1;
+
+    dmgCurEl.textContent = cur;
+    dmgTotEl.textContent = tot;
+
+    // tremida sempre que mudar
+    if (lastDamage !== null && cur !== lastDamage) {
+      triggerShake(dmgEl);
+    }
+
+    // alerta 80%
+    toggleWarning(dmgEl, cur / tot >= 0.8);
+
+    lastDamage = cur;
   }
 
+  /* ========= PRESSÃO ========= */
   if (data.pressure) {
-    presCur.textContent = data.pressure.current ?? 0;
+    const cur = data.pressure.current ?? 0;
+    const tot = data.pressure.total ?? 1;
+
+    presCurEl.textContent = cur;
+
+    if (lastPressure !== null && cur !== lastPressure) {
+      triggerShake(presEl);
+    }
+
+    toggleWarning(presEl, cur / tot >= 0.8);
+
+    lastPressure = cur;
   }
 });
+
+/* =========================
+   HELPERS
+========================= */
+
+function triggerShake(el) {
+  el.classList.remove("shake");
+  void el.offsetWidth; // força reflow
+  el.classList.add("shake");
+}
+
+function toggleWarning(el, active) {
+  el.classList.toggle("warning", active);
+}
