@@ -139,7 +139,6 @@ input, button {
   background: #ffd42b;
   color: #020617;
 }
-
 /* ========================= */
 /* OBS – INTEGRIDADE */
 /* ========================= */
@@ -149,31 +148,30 @@ input, button {
   inset: 0;
 
   display: flex;
-  align-items: center;
+  flex-direction: column;        /* UM ABAIXO DO OUTRO */
+  align-items: flex-start;       /* alinhados à esquerda */
   justify-content: center;
 
-  transform: rotate(-15deg);
+  gap: 6px;                      /* espaço curtíssimo */
+  padding-left: 50%;             /* centraliza o conjunto */
+
+  transform: rotate(-13deg);     /* inclinação ajustada */
 }
 
 .obs-stat {
   font-size: 64px;
-  font-weight: bold;
+  font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 6px;
-
-  transform-origin: center;
 }
 
-/* DANO */
+/* ÍNDICE DE DANO */
 .obs-stat.damage {
   color: white;
   text-shadow:
     0 0 6px #ff2b2b,
     0 0 12px #ff2b2b,
     0 0 24px rgba(255,43,43,0.9);
-
-  margin-right: 18px;
 }
 
 /* PRESSÃO */
@@ -185,7 +183,6 @@ input, button {
     0 0 24px rgba(255,212,43,0.9);
 }
 
-/* barra */
 .obs-stat .slash {
-  margin: 0 4px;
+  margin: 0 6px;
 }
