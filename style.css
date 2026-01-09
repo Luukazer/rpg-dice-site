@@ -1,3 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;700;800&display=swap');
+.obs-integrity-stage {
+  font-family: 'League Spartan', sans-serif;
+}
+
 /* BASE */
 body {
   background: #0f172a;
