@@ -18,12 +18,47 @@
 
     <button onclick="rollDice()">Rolar Dados</button>
 
-    <!-- RESULTADO DO PLAYER -->
+    <!-- RESULTADO -->
     <div id="results" class="hidden">
       <div id="diceResults"></div>
       <div id="successCount"></div>
       <div class="label">Sucessos</div>
     </div>
+
+    <!-- ========================= -->
+    <!-- ÍNDICE DE DANO -->
+    <!-- ========================= -->
+    <div class="stat-box damage">
+      <div class="stat-title">Índice de Dano</div>
+
+      <div class="stat-row">
+        <button onclick="changeStat('damage', -1)">−</button>
+
+        <input id="damageCurrent" type="number" min="0">
+        <span>/</span>
+        <input id="damageTotal" type="number" min="0">
+
+        <button onclick="changeStat('damage', 1)">+</button>
+      </div>
+    </div>
+
+    <!-- ========================= -->
+    <!-- PRESSÃO -->
+    <!-- ========================= -->
+    <div class="stat-box pressure">
+      <div class="stat-title">Pressão</div>
+
+      <div class="stat-row">
+        <button onclick="changeStat('pressure', -1)">−</button>
+
+        <input id="pressureCurrent" type="number" min="0">
+        <span>/</span>
+        <input id="pressureTotal" type="number" min="0">
+
+        <button onclick="changeStat('pressure', 1)">+</button>
+      </div>
+    </div>
+
   </div>
 
   <!-- Firebase -->
