@@ -139,3 +139,53 @@ input, button {
   background: #ffd42b;
   color: #020617;
 }
+
+/* ========================= */
+/* OBS – INTEGRIDADE */
+/* ========================= */
+
+.obs-integrity-stage {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transform: rotate(-15deg);
+}
+
+.obs-stat {
+  font-size: 64px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  transform-origin: center;
+}
+
+/* DANO */
+.obs-stat.damage {
+  color: white;
+  text-shadow:
+    0 0 6px #ff2b2b,
+    0 0 12px #ff2b2b,
+    0 0 24px rgba(255,43,43,0.9);
+
+  margin-right: 18px;
+}
+
+/* PRESSÃO */
+.obs-stat.pressure {
+  color: white;
+  text-shadow:
+    0 0 6px #ffd42b,
+    0 0 12px #ffd42b,
+    0 0 24px rgba(255,212,43,0.9);
+}
+
+/* barra */
+.obs-stat .slash {
+  margin: 0 4px;
+}
