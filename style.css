@@ -336,3 +336,18 @@ button {
     transform: translateX(0) scale(1);
   }
 }
+/* ================================================= */
+/* COMBINAÇÃO: WARNING + IMPACT (NÃO SE MATAM) */
+/* ================================================= */
+
+.obs-integrity-stage .obs-stat.damage.warning.impact {
+  animation:
+    statImpact 0.25s ease-out,
+    pulseGlowRed 1.6s ease-in-out infinite;
+}
+
+.obs-integrity-stage .obs-stat.pressure.warning.impact {
+  animation:
+    statImpact 0.25s ease-out,
+    pulseGlowYellow 1.6s ease-in-out infinite;
+}
