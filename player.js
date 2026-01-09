@@ -14,6 +14,10 @@ const diceResultsDiv = document.getElementById("diceResults");
 const successCountDiv = document.getElementById("successCount");
 const video = document.getElementById("diceVideo");
 
+// 🔒 CONTROLE DE TIMERS (FIX DO BUG)
+let fadeTimeout = null;
+let hideTimeout = null;
+
 function rollDice() {
   const qtd = parseInt(document.getElementById("diceCount").value);
   const ordem3 = document.getElementById("ordem3").checked;
@@ -96,6 +100,10 @@ playerRef.child("lastRoll").on("value", snap => {
   const data = snap.val();
   if (!data) return;
 
+  // 🛑 CANCELA TIMERS ANTIGOS (ESSA É A CORREÇÃO)
+  if (fadeTimeout) clearTimeout(fadeTimeout);
+  if (hideTimeout) clearTimeout(hideTimeout);
+
   diceResultsDiv.innerHTML = data.displayResults.join(" ");
   successCountDiv.innerText = data.successes;
 
@@ -108,12 +116,13 @@ playerRef.child("lastRoll").on("value", snap => {
     video.play();
   }
 
-  // 🔥 APAGA RESULTADO APÓS 10s
-  setTimeout(() => {
+  // fade aos 9s
+  fadeTimeout = setTimeout(() => {
     resultsBox.classList.add("fade-out");
   }, 9000);
 
-  setTimeout(() => {
+  // some aos 10s
+  hideTimeout = setTimeout(() => {
     resultsBox.classList.add("hidden");
     resultsBox.classList.remove("fade-in", "fade-out");
     diceResultsDiv.innerHTML = "";
