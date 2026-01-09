@@ -1,95 +1,83 @@
 const params = new URLSearchParams(window.location.search);
 const playerId = params.get("playerId");
 
-if (!playerId) {
-  alert("Player inválido");
-  throw new Error("Sem playerId");
-}
+if (!playerId) throw new Error("Player inválido");
 
 const playerRef = db.ref("players/" + playerId);
 
-// ELEMENTOS DE TELA
-const resultsBox = document.getElementById("results");
-const diceResultsDiv = document.getElementById("diceResults");
-const successCountDiv = document.getElementById("successCount");
-const video = document.getElementById("diceVideo");
+/* ======================
+   CONTROLE DE DADOS
+====================== */
+function changeDice(delta) {
+  const input = document.getElementById("diceCount");
+  input.value = Math.max(1, parseInt(input.value) + delta);
+}
 
-function rollDice() {
-  const qtd = parseInt(document.getElementById("diceCount").value);
-  const ordem3 = document.getElementById("ordem3").checked;
-  const vantagem = document.getElementById("vantagem").checked;
-  const desvantagem = document.getElementById("desvantagem").checked;
+/* ======================
+   STATUS
+====================== */
+function changeStat(type, delta) {
+  const current = document.getElementById(type + "Current");
+  current.value = Math.max(0, parseInt(current.value) + delta);
 
-  let results = [];
-  let display = [];
-
-  for (let i = 0; i < qtd; i++) {
-    const r = Math.ceil(Math.random() * 12);
-    results.push(r);
-    display.push(String(r));
-  }
-
-  // VANTAGEM
-  if (vantagem && results.includes(12)) {
-    let lows = results
-      .map((v, i) => ({ v, i }))
-      .filter(o => o.v < 8);
-
-    if (lows.length) {
-      let target = lows.sort((a, b) => a.v - b.v)[0];
-      display[target.i] = `8(${results[target.i]})`;
-      results[target.i] = 8;
-    }
-  }
-
-  // DESVANTAGEM
-  if (desvantagem && results.includes(1)) {
-    let highs = results
-      .map((v, i) => ({ v, i }))
-      .sort((a, b) => b.v - a.v);
-
-    let target = highs[0];
-    display[target.i] = `7(${results[target.i]})`;
-    results[target.i] = 7;
-  }
-
-  let successes = 0;
-  results.forEach(r => {
-    if (r >= 8) successes++;
-    if (r === 12) successes += ordem3 ? 2 : 1;
-  });
-
-  playerRef.child("lastRoll").set({
-    results,
-    displayResults: display,
-    successes,
-    ordem3,
-    vantagem,
-    desvantagem,
-    timestamp: Date.now()
+  playerRef.child(type).set({
+    current: parseInt(document.getElementById(type + "Current").value),
+    total: parseInt(document.getElementById(type + "Total").value)
   });
 }
 
-// 🔥 PLAYER ESCUTA O PRÓPRIO RESULTADO
-playerRef.child("lastRoll").on("value", snap => {
-  const data = snap.val();
-  if (!data) return;
+/* ======================
+   ROLAGEM
+====================== */
+function rollDice() {
+  const qtd = parseInt(diceCount.value);
+  const ordem3 = ordem3Checkbox.checked;
+  const vantagem = vantagemCheckbox.checked;
+  const desvantagem = desvantagemCheckbox.checked;
 
-  diceResultsDiv.innerText = data.displayResults.join(", ");
-  successCountDiv.innerText = data.successes;
+  if (vantagem && desvantagem) {
+    alert("Vantagem e Desvantagem não podem juntas");
+    return;
+  }
 
-  resultsBox.classList.remove("hidden", "fade-out");
-  resultsBox.classList.add("fade-in");
+  let results = [];
+  let display = [];
+  let successes = 0;
 
-  video.currentTime = 0;
-  video.play();
+  for (let i = 0; i < qtd; i++) {
+    let r = Math.ceil(Math.random() * 12);
 
-  setTimeout(() => {
-    resultsBox.classList.add("fade-out");
-  }, 6000);
+    // VANTAGEM: sempre que sair 12
+    if (vantagem && r === 12) r = 8;
 
+    // DESVANTAGEM: sempre que sair 1
+    if (desvantagem && r === 1) r = 7;
+
+    results.push(r);
+
+    let spanClass = "";
+    if (r === 1) spanClass = "die-one";
+    if (r === 12) spanClass = "die-twelve";
+
+    display.push(`<span class="${spanClass}">${r}</span>`);
+
+    if (r >= 8) successes++;
+    if (r === 12) successes += ordem3 ? 2 : 1;
+  }
+
+  // MOSTRAR RESULTADO NO PLAYER
+  diceResults.innerHTML = display.join(" ");
+  successCount.textContent = successes;
+  resultsBox.classList.remove("hidden");
+
+  // ESCONDER APÓS 10s
   setTimeout(() => {
     resultsBox.classList.add("hidden");
-    resultsBox.classList.remove("fade-in", "fade-out");
-  }, 7000);
-});
+  }, 10000);
+
+  // ENVIAR PARA OBS
+  playerRef.child("lastRoll").set({
+    successes,
+    timestamp: Date.now()
+  });
+}
