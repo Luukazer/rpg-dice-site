@@ -109,3 +109,20 @@ input, button {
 .hidden {
   display: none;
 }
+
+/* Destaque de dados especiais */
+.die-one {
+  color: #ff2b2b;
+  font-weight: bold;
+  text-shadow:
+    0 0 6px #ff2b2b,
+    0 0 12px rgba(255,43,43,0.8);
+}
+
+.die-twelve {
+  color: #2bff6a;
+  font-weight: bold;
+  text-shadow:
+    0 0 6px #2bff6a,
+    0 0 12px rgba(43,255,106,0.8);
+}
