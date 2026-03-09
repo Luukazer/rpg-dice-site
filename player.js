@@ -28,6 +28,9 @@ function rollDice() {
   const vantagem = document.getElementById("vantagem").checked;
   const desvantagem = document.getElementById("desvantagem").checked;
 
+  console.log("Vantagem:", vantagem);
+  console.log("Desvantagem:", desvantagem);
+
   if (vantagem && desvantagem) {
     alert("Vantagem e Desvantagem não podem ser usadas juntas.");
     return;
