@@ -14,7 +14,7 @@ const diceResultsDiv = document.getElementById("diceResults");
 const successCountDiv = document.getElementById("successCount");
 const video = document.getElementById("diceVideo");
 
-// 🔒 CONTROLE DE TIMERS (FIX DO BUG DE SUMIR DO NADA)
+// 🔒 CONTROLE DE TIMERS
 let fadeTimeout = null;
 let hideTimeout = null;
 
@@ -22,6 +22,7 @@ let hideTimeout = null;
    ROLAGEM DE DADOS
 ========================= */
 function rollDice() {
+
   const qtd = parseInt(document.getElementById("diceCount").value);
   const ordem3 = document.getElementById("ordem3").checked;
   const vantagem = document.getElementById("vantagem").checked;
@@ -37,6 +38,7 @@ function rollDice() {
 
   // ROLAGEM BASE
   for (let i = 0; i < qtd; i++) {
+
     const r = Math.ceil(Math.random() * 12);
     results.push(r);
 
@@ -45,45 +47,26 @@ function rollDice() {
     if (r === 12) cls = "die-twelve";
 
     display.push(`<span class="${cls}">${r}</span>`);
+
   }
 
-  // =====================
-  // VANTAGEM (APLICA SEMPRE)
-  // =====================
-  if (vantagem) {
-    const qtd12 = results.filter(r => r === 12).length;
+  /* =====================
+     CONTAGEM DE SUCESSOS
+  ===================== */
 
-    for (let i = 0; i < qtd12; i++) {
-      const idx = results.findIndex(r => r < 8);
-      if (idx === -1) break;
+  let successThreshold = 8;
 
-      display[idx] = `<span>8(${results[idx]})</span>`;
-      results[idx] = 8;
-    }
-  }
+  if (vantagem) successThreshold = 7;
+  if (desvantagem) successThreshold = 9;
 
-  // =====================
-  // DESVANTAGEM (APLICA SEMPRE)
-  // =====================
-  if (desvantagem) {
-    const qtd1 = results.filter(r => r === 1).length;
-
-    for (let i = 0; i < qtd1; i++) {
-      const max = Math.max(...results);
-      const idx = results.indexOf(max);
-
-      display[idx] = `<span>7(${results[idx]})</span>`;
-      results[idx] = 7;
-    }
-  }
-
-  // =====================
-  // CONTAGEM DE SUCESSOS
-  // =====================
   let successes = 0;
+
   results.forEach(r => {
-    if (r >= 8) successes++;
+
+    if (r >= successThreshold) successes++;
+
     if (r === 12) successes += ordem3 ? 2 : 1;
+
   });
 
   // ENVIA PARA FIREBASE
@@ -96,16 +79,18 @@ function rollDice() {
     desvantagem,
     timestamp: Date.now()
   });
+
 }
 
 /* =========================
    ESCUTA RESULTADO (10s)
 ========================= */
+
 playerRef.child("lastRoll").on("value", snap => {
+
   const data = snap.val();
   if (!data) return;
 
-  // 🛑 cancela timers antigos
   if (fadeTimeout) clearTimeout(fadeTimeout);
   if (hideTimeout) clearTimeout(hideTimeout);
 
@@ -120,18 +105,17 @@ playerRef.child("lastRoll").on("value", snap => {
     video.play();
   }
 
-  // fade aos 9s
   fadeTimeout = setTimeout(() => {
     resultsBox.classList.add("fade-out");
   }, 9000);
 
-  // some aos 10s
   hideTimeout = setTimeout(() => {
     resultsBox.classList.add("hidden");
     resultsBox.classList.remove("fade-in", "fade-out");
     diceResultsDiv.innerHTML = "";
     successCountDiv.innerText = "";
   }, 10000);
+
 });
 
 /* =========================
@@ -143,8 +127,9 @@ const damageTotal = document.getElementById("damageTotal");
 const pressureCurrent = document.getElementById("pressureCurrent");
 const pressureTotal = document.getElementById("pressureTotal");
 
-// CARREGA VALORES DO FIREBASE
+// CARREGA DO FIREBASE
 playerRef.child("stats").on("value", snap => {
+
   const data = snap.val();
   if (!data) return;
 
@@ -152,10 +137,12 @@ playerRef.child("stats").on("value", snap => {
   damageTotal.value = data.damageTotal ?? 0;
   pressureCurrent.value = data.pressureCurrent ?? 0;
   pressureTotal.value = data.pressureTotal ?? 0;
+
 });
 
-// BOTÕES + / -
+// BOTÕES
 function changeStat(type, delta) {
+
   let currentEl, totalEl;
 
   if (type === "damage") {
@@ -170,9 +157,11 @@ function changeStat(type, delta) {
   let total = parseInt(totalEl.value) || 0;
 
   current = Math.max(0, Math.min(current + delta, total));
+
   currentEl.value = current;
 
   saveStats();
+
 }
 
 // SALVA AO DIGITAR
@@ -181,15 +170,16 @@ function changeStat(type, delta) {
 });
 
 /* =========================
-   SALVAMENTO (PLAYER + OBS)
+   SALVAMENTO
 ========================= */
+
 function saveStats() {
+
   const dmgCur = parseInt(damageCurrent.value) || 0;
   const dmgTot = parseInt(damageTotal.value) || 0;
   const presCur = parseInt(pressureCurrent.value) || 0;
   const presTot = parseInt(pressureTotal.value) || 0;
 
-  // mantém compatibilidade com a ficha do player
   playerRef.child("stats").set({
     damageCurrent: dmgCur,
     damageTotal: dmgTot,
@@ -197,7 +187,6 @@ function saveStats() {
     pressureTotal: presTot
   });
 
-  // 🔥 ESPELHA PARA O OBS INTEGRIDADE
   playerRef.update({
     damage: {
       current: dmgCur,
@@ -208,4 +197,5 @@ function saveStats() {
       total: presTot
     }
   });
+
 }
