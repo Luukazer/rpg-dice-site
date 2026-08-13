@@ -12,12 +12,14 @@ const rollRef = db.ref("players/" + playerId + "/lastRoll");
 const wrapper = document.getElementById("diceWrapper");
 const video = document.getElementById("diceVideo");
 const count = document.getElementById("successCount");
+const alignment = document.getElementById("alignment");
 
-if (!wrapper || !video || !count) {
+if (!wrapper || !video || !count || !alignment) {
   console.error("Elemento do OBS não encontrado", {
     wrapper,
     video,
-    count
+    count,
+    alignment
   });
   return;
 }
@@ -38,6 +40,8 @@ rollRef.on("value", snapshot => {
   void wrapper.offsetWidth;
 
   count.textContent = data.successes;
+  alignment.textContent = data.alignment || "Normal";
+
   wrapper.classList.add("show");
   video.play();
 
