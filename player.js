@@ -72,11 +72,24 @@ function rollDice() {
 
   });
 
+  /* =====================
+     ORDEM / CAOS / NORMAL
+  ===================== */
+
+  let alignment = "Normal";
+
+  if (results.includes(12)) {
+    alignment = "Ordem";
+  } else if (results.includes(1)) {
+    alignment = "Caos";
+  }
+
   // ENVIA PARA FIREBASE
   playerRef.child("lastRoll").set({
     results,
     displayResults: display,
     successes,
+    alignment,
     ordem3,
     vantagem,
     desvantagem,
