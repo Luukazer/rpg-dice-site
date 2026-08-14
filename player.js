@@ -84,17 +84,19 @@ function rollDice() {
     alignment = "Caos";
   }
 
-// ENVIA PARA FIREBASE
-playerRef.child("lastRoll").set({
-  results,
-  displayResults: display,
-  successes,
-  alignment,
-  ordem3,
-  vantagem,
-  desvantagem,
-  timestamp: Date.now()
-});
+  // ENVIA PARA FIREBASE
+  playerRef.child("lastRoll").set({
+    results,
+    displayResults: display,
+    successes,
+    alignment,
+    ordem3,
+    vantagem,
+    desvantagem,
+    timestamp: Date.now()
+  });
+
+}
 
 /* =========================
    ESCUTA RESULTADO (10s)
