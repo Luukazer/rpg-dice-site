@@ -5,22 +5,72 @@
   <title>Mestre</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div class="container">
-    <h1>Mestre</h1>
 
-    <input id="playerName" placeholder="Nome do Player">
-    <button onclick="createPlayer()">Criar Player</button>
+  <div class="master-layout">
 
-    <ul id="playerList"></ul>
+    <!-- ========================= -->
+    <!-- PAINEL DO MESTRE -->
+    <!-- ========================= -->
+
+    <div class="master-panel">
+
+      <h1>Mestre</h1>
+
+      <input id="playerName" placeholder="Nome do Player">
+
+      <button onclick="createPlayer()">
+        Criar Player
+      </button>
+
+      <h2>Players</h2>
+
+      <ul id="playerList"></ul>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- HISTÓRICO DE ROLAGENS -->
+    <!-- ========================= -->
+
+    <div class="roll-chat">
+
+      <div class="roll-chat-header">
+
+        <h2>Histórico de Rolagens</h2>
+
+        <button
+          class="clear-history"
+          onclick="clearHistory()">
+          Limpar
+        </button>
+
+      </div>
+
+      <div
+        id="rollHistory"
+        class="roll-history">
+      </div>
+
+    </div>
+
   </div>
 
+
   <!-- Firebase SDK -->
+
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
+
   <!-- App -->
-<script src="./firebase.js"></script>
-<script src="./admin.js"></script>
+
+  <script src="./firebase.js"></script>
+
+  <script src="./admin.js"></script>
+
 </body>
 </html>
