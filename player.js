@@ -85,18 +85,37 @@ function rollDice() {
   }
 
   // ENVIA PARA FIREBASE
-  playerRef.child("lastRoll").set({
+const timestamp = Date.now();
+
+playerRef.child("lastRoll").set({
+  results,
+  displayResults: display,
+  successes,
+  alignment,
+  ordem3,
+  vantagem,
+  desvantagem,
+  timestamp
+});
+
+// SALVA A ROLAGEM NO HISTÓRICO
+playerRef.once("value").then(snapshot => {
+
+  const playerData = snapshot.val();
+
+  db.ref("rollHistory").push({
+    playerId,
+    playerName: playerData.name || "Player",
     results,
-    displayResults: display,
     successes,
     alignment,
     ordem3,
     vantagem,
     desvantagem,
-    timestamp: Date.now()
+    timestamp
   });
 
-}
+});
 
 /* =========================
    ESCUTA RESULTADO (10s)
