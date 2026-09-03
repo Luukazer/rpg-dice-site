@@ -130,9 +130,35 @@ button {
   color: white;
 }
 
-.success-label {
-  font-size: 20px;
-  color: white;
+.alignment-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 20px;
+  margin-top: 8px;
+}
+
+.order-dot,
+.chaos-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: block;
+}
+
+.order-dot {
+  background: #2bff6a;
+  box-shadow:
+    0 0 6px #2bff6a,
+    0 0 12px rgba(43, 255, 106, 0.8);
+}
+
+.chaos-dot {
+  background: #ff2b2b;
+  box-shadow:
+    0 0 6px #ff2b2b,
+    0 0 12px rgba(255, 43, 43, 0.8);
 }
 
 /* ================================================= */
