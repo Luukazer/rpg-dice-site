@@ -1,16 +1,41 @@
 const list = document.getElementById("playerList");
 const rollHistory = document.getElementById("rollHistory");
 
-db.ref("players").on("value", snapshot => {
-  list.innerHTML = "";
+function createPlayer() {
+  const name = document.getElementById("playerName").value.trim();
+  if (!name) return;
 
-  snapshot.forEach(child => {
-    const id = child.key;
-    const name = child.val().name;
+  db.ref("players").push({
+    name: name
+  });
+
+  document.getElementById("playerName").value = "";
+}
+
+function deletePlayer(id) {
+  if (!confirm("Excluir este player?")) return;
+  db.ref("players/" + id).remove();
+}
+
+db.ref("players").on("value", snapshot => {
+
+  list.innerHTML = "";
+  rollHistory.innerHTML = "";
+
+  snapshot.forEach(playerSnap => {
+
+    const id = playerSnap.key;
+    const player = playerSnap.val();
+    const playerName = player.name || "Player";
+
+    /* =========================
+       LISTA DE PLAYERS
+    ========================= */
 
     const li = document.createElement("li");
+
     li.innerHTML = `
-      <strong>${name}</strong><br>
+      <strong>${playerName}</strong><br>
 
       <a href="player.html?playerId=${id}" target="_blank">
         Player
@@ -29,47 +54,21 @@ db.ref("players").on("value", snapshot => {
     `;
 
     list.appendChild(li);
-  });
-});
 
-function createPlayer() {
-  const name = document.getElementById("playerName").value.trim();
-  if (!name) return;
 
-  db.ref("players").push({
-    name: name
-  });
-
-  document.getElementById("playerName").value = "";
-}
-
-function deletePlayer(id) {
-  if (!confirm("Excluir este player?")) return;
-  db.ref("players/" + id).remove();
-}
-
-/* =========================
-   HISTÓRICO DE ROLAGENS
-========================= */
-
-db.ref("players").on("value", snapshot => {
-
-  rollHistory.innerHTML = "";
-
-  snapshot.forEach(playerSnap => {
-
-    const player = playerSnap.val();
-    const playerName = player.name || "Player";
+    /* =========================
+       HISTÓRICO DESTE PLAYER
+    ========================= */
 
     const playerTitle = document.createElement("h3");
     playerTitle.innerText = playerName;
-    
+
     rollHistory.appendChild(playerTitle);
-    
+
     const clearButton = document.createElement("button");
     clearButton.innerText = "Apagar histórico";
-    clearButton.onclick = () => clearRollHistory(playerSnap.key);
-    
+    clearButton.onclick = () => clearRollHistory(id);
+
     rollHistory.appendChild(clearButton);
 
     playerSnap.child("rollHistory").forEach(rollSnap => {
