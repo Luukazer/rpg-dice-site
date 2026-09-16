@@ -96,6 +96,17 @@ function rollDice() {
     timestamp: Date.now()
   });
 
+  // SALVA NO HISTÓRICO
+  playerRef.child("rollHistory").push({
+    results,
+    successes,
+    alignment,
+    ordem3,
+    vantagem,
+    desvantagem,
+    timestamp: Date.now()
+  });
+  
 }
 
 /* =========================
