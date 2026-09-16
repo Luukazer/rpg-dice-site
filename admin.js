@@ -61,10 +61,6 @@ db.ref("players").on("value", snapshot => {
     const player = playerSnap.val();
     const playerName = player.name || "Player";
 
-    const history = player.rollHistory;
-
-    if (!history) return;
-
     const playerTitle = document.createElement("h3");
     playerTitle.innerText = playerName;
     
@@ -76,7 +72,7 @@ db.ref("players").on("value", snapshot => {
     
     rollHistory.appendChild(clearButton);
 
-    history.forEach(rollSnap => {
+    playerSnap.child("rollHistory").forEach(rollSnap => {
 
       const roll = rollSnap.val();
 
