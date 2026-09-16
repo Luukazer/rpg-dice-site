@@ -97,7 +97,17 @@ function rollDice() {
   });
 
 }
-
+  // SALVA NO HISTÓRICO DE ROLAGENS
+  db.ref("rollHistory").push({
+    playerId,
+    results,
+    successes,
+    alignment,
+    ordem3,
+    vantagem,
+    desvantagem,
+    timestamp: Date.now()
+  });
 /* =========================
    ESCUTA RESULTADO (10s)
 ========================= */
